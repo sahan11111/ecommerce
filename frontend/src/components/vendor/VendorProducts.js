@@ -48,7 +48,8 @@ function VendorProducts(props){
                                         <tr>
                                             <td>{index+1}</td>
                                             <td>
-                                                <Link><img src='' className="img-thumbnail" width={80} alt="..."/>{product.title}</Link>
+                                            <Link to={`/vendor/update-product/${product.id}`}><img  src={product.image} className="img-thumbnail" width={80} alt="..."/></Link>
+                                            <Link className='text-dark'to={`/vendor/update-product/${product.id}`}><label>{product.title}</label></Link>
                                             </td>
                                             <td>Rs. {product.price}</td>
                                             <td>$. {product.usd_price}</td>
