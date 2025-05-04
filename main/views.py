@@ -148,6 +148,12 @@ class ProductImgsDetail(generics.ListCreateAPIView):
         product_id=self.kwargs['product-id']
         qs = qs.filter(product__id=product_id)  # Filter by product_id
         return qs  
+
+
+class ProductImgDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset=models.ProductImage.objects.all()
+    serializer_class=serializers.ProductImageSerializer   
+
     
 class TagProductList(generics.ListCreateAPIView):
     queryset=models.Product.objects.all().order_by('id') 

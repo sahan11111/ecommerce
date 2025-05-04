@@ -5,6 +5,9 @@ import { useState,useEffect } from 'react';
 const baseUrl = 'http://127.0.0.1:8000/api';
 function UpdateProduct(){
     const [errorMsg, seterrorMsg]=useState('');
+
+    const [IsImageDelete, setIsImageDelete]=useState(false);
+
     const [IsFeaturedImage, setIsFeaturedImage]=useState(false);
     const [IsProductFile, setIsProductFile]=useState(false);
     const [IsProductImagesSelected, setIsProductImagesSelected]=useState(false);
@@ -136,6 +139,7 @@ function UpdateProduct(){
         .then((response)=>response.json())
         .then((data)=>{
             // console.log(data);
+            
             setProductData({
                 'category':data.category,
                 'vendor':data.vendor,
@@ -152,7 +156,18 @@ function UpdateProduct(){
             });
         });
     }
-console.log(ProductData);
+
+    function deleteImage(image_id){
+        axios.delete(baseUrl + '/product-img/'+image_id)
+            .then(function(response) {
+                if(response.status===204){
+                    window.location.reload();
+                }
+            })
+            .catch(function(error){
+                console.log(error);
+            });   
+    }
     return(
 
         <div className="container mt-4">
@@ -212,17 +227,23 @@ console.log(ProductData);
                                 </div>
                                 <div className="mb-3">
                                     <label for="Product_Imgs" className="form-label">Product Images</label>
-                                    <input type="file" name='product_imgs' onChange={multiplefileHandler} className="form-control" id='Product_Imgs' accept="image/*"  multiple />
+                                    <input type="file" name='product_imgs' onChange={multiplefileHandler} className="form-control mb-3" id='Product_Imgs' accept="image/*"  multiple />
+                                    <>
                                     {
-                                        ProductData.product_imgs && ProductData.product_imgs.map((img, index) => (
-                                            <img key={index} src={img.image} className="mt-2 ms-2 rounded" width={150} alt={`Product Image ${index}`} />
-                                        ))
+                                        ProductData.product_imgs && ProductData.product_imgs.map((img, index) =><>
+                                            <span className='image-box d-inline  p-3 my-2'  onClick={()=>deleteImage(img.id)}>
+                                                <i className='fa fa-trash text-danger'style={styles.deleteBtn} role='button'></i>
+                                                <img key={index} src={img.image} className="my-4  rounded" width={200} alt={`Product Image ${index}`} />
+                                            </span> 
+                                            </>
+                                        )
                                     }
+                                    </>
                                 </div>
                                 <div className="mb-3">
                                     <label for="Product_File" className="form-label">Product File</label>
                                     <input type="file" name='product_file' onChange={fileHandler} className="form-control" id='Product_File' accept="product_file/*"/>
-                                    
+                                    <Link to={ProductData.product_imgs.file}>{ProductData.product_file}</Link>
                                 </div>
                                     <button type="button" onClick={submitHandler} className="btn btn-primary">Submit</button>
                             </form>
@@ -235,4 +256,11 @@ console.log(ProductData);
 
     )
 }
+const styles={
+    'deleteBtn':{
+        'position':'absolute',
+
+    }
+};
+
 export default UpdateProduct;

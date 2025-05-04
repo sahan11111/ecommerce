@@ -19,6 +19,7 @@ urlpatterns = [
     path('update-product-download-count/<int:product_id>',views.update_product_downloads_count,name='update_product_downloads_count'),
     path('product-imgs/',views.ProductImgsList.as_view()),
     path('product-imgs/<int:product_id>',views.ProductImgsDetail.as_view()),
+    path('product-img/<int:pk>',views.ProductImgDetail.as_view()),
     
     #Products Categories
     path('categories/',views.CategoryList.as_view()),
