@@ -1,10 +1,13 @@
 import SellerSidebar from './VendorSidebar';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useState,useEffect } from 'react';
 const baseUrl = 'http://127.0.0.1:8000/api';
 function UpdateProduct(){
     const [errorMsg, seterrorMsg]=useState('');
+    const [IsFeaturedImage, setIsFeaturedImage]=useState(false);
+    const [IsProductFile, setIsProductFile]=useState(false);
+    const [IsProductImagesSelected, setIsProductImagesSelected]=useState(false);
     const [successMsg, setsuccessMsg]=useState('');
     const vendor_id = localStorage.getItem('vendor_id');
     const [CategoryData,setCategoryData]=useState([]);
@@ -19,11 +22,9 @@ function UpdateProduct(){
         'tags':'',
         'image':'',
         'demo_url':'',
+        'product_imgs':'',
         'product_file':'',
     });
-
-    const [ImgUploadErrorMsg, setImgUploadErrorMsg]=useState('');
-    const [ImgUploadSuccessMsg, setImgUploadSuccessMsg]=useState('');
     const [ProductImgs,setProductImgs]=useState([]);
 
     const inputHandler=(event)=>{
@@ -36,11 +37,18 @@ function UpdateProduct(){
         setProductData({
             ...ProductData,
             [event.target.name]:event.target.files[0]
-        });   
+        });
+        if(event.target.name==='image')  {
+            setIsFeaturedImage(true);
+        } 
+        if(event.target.name==='product_file')  {
+            setIsProductFile(true);
+        } 
     };
     const multiplefileHandler=(event)=>{
         var files=event.target.files;
         if(files.length>0){
+            setIsProductImagesSelected(true);
             setProductImgs(files);
         }
     };
@@ -58,51 +66,42 @@ function UpdateProduct(){
         formData.append('price', ProductData.price);
         formData.append('usd_price', ProductData.usd_price);
         formData.append('tags', ProductData.tags);
-        formData.append('image', ProductData.image);
+        if(IsFeaturedImage){
+            formData.append('image', ProductData.image);
+        }
+        if(IsProductFile){
+            formData.append('product_file', ProductData.product_file);
+        }
+
         formData.append('demo_url', ProductData.demo_url);
-        formData.append('product_file', ProductData.product_file);
     
         // Submit data
-        axios.put(baseUrl + '/product/'+product_id, formData,{
+        axios.patch(baseUrl + '/product/'+product_id+'/', formData,{
             headers:{
                 'content-type':'multipart/form-data'
             }
         })
             .then(function(response) {
-                if (response.status===201){
+                if (response.status===200){
                     seterrorMsg('');
                     setsuccessMsg(response.statusText);
-                    setProductData(
-                        {
-                            'category':'',
-                            'vendor':'',
-                            'title':'',
-                            'slug':'',
-                            'detail':'',
-                            'price':'',
-                            'usd_price':'',
-                            'tags':'',
-                            'image':'',
-                            'demo_url':'',
-                            'product_file':'',
-                
-                        });
+                    if(IsProductImagesSelected){
 
-                    for(let i=0;i<ProductImgs.length;i++){
-                        const ImageFormData = new FormData();
-                        ImageFormData.append('product',response.data.id);
-                        ImageFormData.append('image',ProductImgs[i]);
-                        //submit multiple images
-                        axios.post(baseUrl + '/product-imgs/', ImageFormData)
-                        .then(function(response) {
-                            console.log(response);
-                            
-                        })
-                        .catch(function(error) {
-                            console.error('Login Error:', error);
-                        });
+                        for(let i=0;i<ProductImgs.length;i++){
+                            const ImageFormData = new FormData();
+                            ImageFormData.append('product',response.data.id);
+                            ImageFormData.append('image',ProductImgs[i]);
+                            //submit multiple images
+                            axios.post(baseUrl + '/product-imgs/', ImageFormData)
+                            .then(function(response) {
+                                console.log(response);
+                                
+                            })
+                            .catch(function(error) {
+                                console.error('Login Error:', error);
+                            });
+                        }
                     }
-                    setProductImgs('');
                 }
                 else{
                     console.log(response.data);
@@ -149,9 +148,11 @@ function UpdateProduct(){
                 'image':data.image,
                 'demo_url':data.demo_url,
                 'product_file':data.product_file,  
+                'product_imgs':data.product_imgs,  
             });
         });
     }
+console.log(ProductData);
     return(
 
         <div className="container mt-4">
@@ -203,18 +204,25 @@ function UpdateProduct(){
                                 <div className="mb-3">
                                     <label for="Demo_URL" className="form-label">Demo URL </label>
                                     <input type="url"  name='demo_url' value={ProductData.demo_url} onChange={inputHandler} className="form-control" id='Demo_URL'/>
-                                </div> 
+                                </div>
                                 <div className="mb-3">
                                     <label for="ProductImg" className="form-label">Featured Image</label>
                                     <input type="file" name='image' onChange={fileHandler} className="form-control" id='ProductImg' accept="image/*"/>
+                                <img src={ProductData.image} className='mt-2 rounded' width={150}/> 
                                 </div>
                                 <div className="mb-3">
                                     <label for="Product_Imgs" className="form-label">Product Images</label>
                                     <input type="file" name='product_imgs' onChange={multiplefileHandler} className="form-control" id='Product_Imgs' accept="image/*"  multiple />
+                                    {
+                                        ProductData.product_imgs && ProductData.product_imgs.map((img, index) => (
+                                            <img key={index} src={img.image} className="mt-2 ms-2 rounded" width={150} alt={`Product Image ${index}`} />
+                                        ))
+                                    }
                                 </div>
                                 <div className="mb-3">
                                     <label for="Product_File" className="form-label">Product File</label>
                                     <input type="file" name='product_file' onChange={fileHandler} className="form-control" id='Product_File' accept="product_file/*"/>
+                                    
                                 </div>
                                     <button type="button" onClick={submitHandler} className="btn btn-primary">Submit</button>
                             </form>

@@ -43,10 +43,9 @@ class ProductImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'image']
        
 class ProductDetailSerializer(serializers.ModelSerializer):
+    product_imgs = ProductImageSerializer(many=True, read_only=True)
     tag_list = serializers.SerializerMethodField()
     product_rating = serializers.StringRelatedField(many=True, read_only=True)
-    product_imgs = ProductImageSerializer(many=True, read_only=True)
-    
     class Meta:
         model = models.Product
         fields = ['id', 'category', 'vendor', 'title', 'slug','tag_list', 'detail', 'price', 'usd_price','product_rating', 'product_imgs','demo_url','image','product_file','downloads','published_status','tags']  

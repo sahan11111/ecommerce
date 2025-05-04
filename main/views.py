@@ -139,7 +139,15 @@ class ProductList(generics.ListCreateAPIView):
 class ProductImgsList(generics.ListCreateAPIView):
     queryset = models.ProductImage.objects.all()
     serializer_class = serializers.ProductImageSerializer
-
+    
+class ProductImgsDetail(generics.ListCreateAPIView):
+    queryset=models.ProductImage.objects.all()
+    serializer_class=serializers.ProductImageSerializer
+    def get_queryset(self):
+        qs = super().get_queryset()
+        product_id=self.kwargs['product-id']
+        qs = qs.filter(product__id=product_id)  # Filter by product_id
+        return qs  
     
 class TagProductList(generics.ListCreateAPIView):
     queryset=models.Product.objects.all().order_by('id') 
@@ -169,8 +177,9 @@ class RelatedProductList(generics.ListCreateAPIView):
  
 
 class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset=models.Product.objects.all()
-    serializer_class=serializers.ProductDetailSerializer
+    queryset = models.Product.objects.all()
+    serializer_class = serializers.ProductDetailSerializer
+
 
 @csrf_exempt     
 def update_product_downloads_count(request, product_id):
