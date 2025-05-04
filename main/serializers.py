@@ -61,7 +61,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
-        fields = ['id', 'first_name', 'last_name','username','email']
+        fields = ['id', 'first_name', 'last_name','username','email','password']
         
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -106,6 +106,13 @@ class OrderItemSerializer(serializers.ModelSerializer):
         return response
         
 class CustomerOrderItemSerializer(serializers.ModelSerializer):
+    order=OrderSerializer()
+    product=ProductDetailSerializer()
+    class Meta:
+        model = models.OrderItem
+        fields = ['id','order','product','qty','price','usd_price']
+        
+class VendorOrderItemSerializer(serializers.ModelSerializer):
     order=OrderSerializer()
     product=ProductDetailSerializer()
     class Meta:

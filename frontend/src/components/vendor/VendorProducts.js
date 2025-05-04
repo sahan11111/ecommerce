@@ -8,7 +8,7 @@ function VendorProducts(props){
     const [ProductData,setProductData]=useState([]);
 
     useEffect(() => {
-        fetchData(baseUrl+'/products/');
+        fetchData(baseUrl+'/vendor/'+vendor_id+'/products/');
     },[]);
     function fetchData(baseurl){
         fetch(baseurl)

@@ -92,6 +92,8 @@ class OrderItem(models.Model):
     class Meta:
         verbose_name_plural='Order Items'
         
+    
+        
  #CustomerAddress Model   
 class CustomerAddress(models.Model):
     customer=models.ForeignKey(Customer,on_delete=models.CASCADE,related_name='customer_address')

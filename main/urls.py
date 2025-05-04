@@ -11,6 +11,9 @@ urlpatterns = [
     path('vendor/<int:pk>/',views.VendorDetail.as_view()),
     path('vendor/register/',views.vendor_register,name='vendor_register'),
     path('vendor/login/',views.vendor_login,name='vendor_login'),
+    path('vendor/<int:pk>/orderitems/',views.VendorOrderItemList.as_view()),
+    path('vendor/<int:pk>/products/',views.VendorProductList.as_view()),
+    
     #Products
     path('products/',views.ProductList.as_view()),
     path('products/<str:tag>',views.TagProductList.as_view()),

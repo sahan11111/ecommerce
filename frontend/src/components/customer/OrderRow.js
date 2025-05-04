@@ -5,7 +5,7 @@ import { CurrencyContext } from '../../Context';
 function OrderRow(props){
     const index=props.index;
     const item=props.item;
-        const {CurrencyData}=useContext(CurrencyContext);
+    const {CurrencyData}=useContext(CurrencyContext);
     
     const baseUrl='http://127.0.0.1:8000/api';
 

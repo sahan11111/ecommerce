@@ -24,74 +24,74 @@ class VendorDetail(generics.RetrieveUpdateDestroyAPIView):
     # ]
 
 @csrf_exempt   
-def vendor_login(request) :
-    username=request.POST.get('username')
-    password=request.POST.get('password')
-    user=authenticate(username=username,password=password)
+def vendor_login(request):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    user = authenticate(username=username, password=password)  # This will work with hashed passwords
+    
     if user:
-        
         vendor = models.Vendor.objects.get(user=user)
         msg = {
             'bool': True,
             'user': user.username,
             'id': vendor.id
         }
-            
     else:
         msg = {
             'bool': False,
             'msg': 'Invalid Username or Password'
         }
+    
     return JsonResponse(msg)
 
+
 @csrf_exempt   
-def vendor_register(request) :
-    first_name=request.POST.get('first_name')
-    last_name=request.POST.get('last_name')  
-    username=request.POST.get('username')
-    email=request.POST.get('email')
-    mobile=request.POST.get('mobile')
-    address=request.POST.get('address')
-    password=request.POST.get('password')
+def vendor_register(request):
+    first_name = request.POST.get('first_name')
+    last_name = request.POST.get('last_name')  
+    username = request.POST.get('username')
+    email = request.POST.get('email')
+    mobile = request.POST.get('mobile')
+    address = request.POST.get('address')
+    password = request.POST.get('password')
+    
     try:
-        user=User.objects.create(
+        user = User.objects.create(
             first_name=first_name,
             last_name=last_name,
             username=username,
             email=email,
-            password=password,
         )
-        if user:
-            #create customer
-            try:
-                vendor=models.Vendor.objects.create(
+        # Hash the password before saving
+        user.set_password(password)
+        user.save()
+        
+        # Create vendor
+        try:
+            vendor = models.Vendor.objects.create(
                 user=user,
                 mobile=mobile,
-                address=address, 
-                )
-                msg={
-                    'bool':True,
-                    'user':user.id ,
-                    'vendor_id':vendor.id,
-                    'msg':'Registration Successful !!. You Can Login Now !!.'
-                            
-                }
-            except IntegrityError:
-                msg={
-                    'bool':False,
-                    'msg':'Mobile Already Exist!!'            
-                    } 
-        else:
-            msg={
-                'bool':False,
-                'msg':'Opps... Somthing Went wrong'            
-                }
+                address=address,
+            )
+            msg = {
+                'bool': True,
+                'user': user.id,
+                'vendor_id': vendor.id,
+                'msg': 'Registration Successful! You can log in now.'
+            }
+        except IntegrityError:
+            msg = {
+                'bool': False,
+                'msg': 'Mobile already exists!'
+            }
     except IntegrityError:
-            msg={
-                'bool':False,
-                'msg':'Username Already Exist!!'            
-            } 
+        msg = {
+            'bool': False,
+            'msg': 'Username already exists!'
+        }
+
     return JsonResponse(msg)
+
     
 class ProductList(generics.ListCreateAPIView):
     queryset=models.Product.objects.all()
@@ -149,7 +149,16 @@ class ProductImgsDetail(generics.ListCreateAPIView):
         qs = qs.filter(product__id=product_id)  # Filter by product_id
         return qs  
 
-
+class VendorProductList(generics.ListCreateAPIView):
+    queryset=models.Product.objects.all()
+    serializer_class=serializers.ProductListSerializer
+    
+    def get_queryset(self):
+        qs=super().get_queryset()
+        vendor_id = self.kwargs['pk']
+        qs=qs.filter(vendor__id=vendor_id)
+        return qs
+    
 class ProductImgDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset=models.ProductImage.objects.all()
     serializer_class=serializers.ProductImageSerializer   
@@ -225,72 +234,71 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=serializers.UserSerializer
 
 @csrf_exempt   
-def customer_login(request) :
-    username=request.POST.get('username')
-    password=request.POST.get('password')
-    user=authenticate(username=username,password=password)
+def customer_login(request):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    user = authenticate(username=username, password=password)  # This is correct!
+    
     if user:
-        
         customer = models.Customer.objects.get(user=user)
         msg = {
             'bool': True,
             'user': user.username,
             'id': customer.id
         }
-            
     else:
         msg = {
             'bool': False,
             'msg': 'Invalid Username or Password'
         }
+    
     return JsonResponse(msg)
 
+
 @csrf_exempt   
-def customer_register(request) :
-    first_name=request.POST.get('first_name')
-    last_name=request.POST.get('last_name')  
-    username=request.POST.get('username')
-    email=request.POST.get('email')
-    mobile=request.POST.get('mobile')
-    password=request.POST.get('password')
+def customer_register(request):
+    first_name = request.POST.get('first_name')
+    last_name = request.POST.get('last_name')  
+    username = request.POST.get('username')
+    email = request.POST.get('email')
+    mobile = request.POST.get('mobile')
+    password = request.POST.get('password')
+    
     try:
-        user=User.objects.create(
+        user = User.objects.create(
             first_name=first_name,
             last_name=last_name,
             username=username,
             email=email,
-            password=password,
         )
-        if user:
-            #create customer
-            try:
-                customer=models.Customer.objects.create(
+        user.set_password(password)  # ✅ important, hashes the password
+        user.save()
+
+        # create customer
+        try:
+            customer = models.Customer.objects.create(
                 user=user,
-                mobile=mobile, 
-                )
-                msg={
-                    'bool':True,
-                    'user':user.id ,
-                    'customer_id':customer.id,
-                    'msg':'Registration Successful !!. You Can Login Now !!.'
-                            
-                }
-            except IntegrityError:
-                msg={
-                    'bool':False,
-                    'msg':'Mobile Already Exist!!'            
-                    } 
-        else:
-            msg={
-                'bool':False,
-                'msg':'Opps... Somthing Went wrong'            
-                }
+                mobile=mobile,
+            )
+            msg = {
+                'bool': True,
+                'user': user.id,
+                'customer_id': customer.id,
+                'msg': 'Registration Successful! You can log in now.'
+            }
+        except IntegrityError:
+            msg = {
+                'bool': False,
+                'msg': 'Mobile already exists!'
+            }
     except IntegrityError:
-            msg={
-                'bool':False,
-                'msg':'Username Already Exist!!'            
-            } 
+        msg = {
+            'bool': False,
+            'msg': 'Username already exists!'
+        }
+
     return JsonResponse(msg)
+
 
     
 class OrderList(generics.ListCreateAPIView):
@@ -314,7 +322,7 @@ def update_order_status(request,order_id):
 class OrderItemList(generics.ListCreateAPIView):
     queryset=models.OrderItem.objects.all()
     serializer_class=serializers.OrderItemSerializer
-    
+#customer item orderlist
 class CustomerOrderItemList(generics.ListAPIView):
     queryset=models.OrderItem.objects.all()
     serializer_class=serializers.CustomerOrderItemSerializer
@@ -325,6 +333,16 @@ class CustomerOrderItemList(generics.ListAPIView):
         qs=qs.filter(order__customer__id=customer_id)
         return qs
 
+#Vendor Order Item List
+class VendorOrderItemList(generics.ListAPIView):
+    queryset=models.OrderItem.objects.all()
+    serializer_class=serializers.VendorOrderItemSerializer
+    
+    def get_queryset(self):
+        qs=super().get_queryset()
+        vendor_id = self.kwargs['pk']
+        qs=qs.filter(product__vendor__id=vendor_id)
+        return qs
     
 class OrderDetail(generics.ListAPIView):
     # queryset=models.OrderItem.objects.all()
