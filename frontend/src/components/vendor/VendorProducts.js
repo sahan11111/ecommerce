@@ -18,7 +18,25 @@ function VendorProducts(props){
             setProductData(data.results);
         });
     }
-    console.log(ProductData);
+    function showConfirm(product_id) {
+        var _confirm = window.confirm('Are you sure to delete this product?');
+        if (_confirm === true) {
+            fetch(baseUrl + '/product/' + product_id + '/', {
+                method: 'DELETE'
+            })
+            .then((response) => {
+                if (response.status === 204) {
+                    window.location.href = 'http://localhost:3000/vendor/products';
+                } else {
+                    alert('Failed to delete product.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred.');
+            });
+        }
+    }
     return(
         <div className="container mt-4">
             <div className="row ">
@@ -71,8 +89,8 @@ function VendorProducts(props){
                                             </td>
                                             {/* <td><button className="btn btn-primary btn-sm">Download</button></td> */}
                                             <td>
-                                                <a href='#' className='btn btn-warning ms-1'>Edit</a>
-                                                <a href='#' className='btn btn-danger ms-1'>Delete</a>
+                                                <Link to={`/vendor/update-product/${product.id}`} className='btn btn-warning ms-1'>Edit</Link>
+                                                <Link to={`/vendor/delete-product/${product.id}`}  onClick={()=>showConfirm(product.id)} className='btn btn-danger ms-1'>Delete</Link>
                                             </td>
                                         </tr>
                                 )}
