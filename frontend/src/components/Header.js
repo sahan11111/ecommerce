@@ -80,9 +80,11 @@ function Header(){
               </ul>
           </li>         
           }
+          { checkVendor === 'true'&&(userContext !== 'true' ||checkVendor === 'false' )  &&
           <li className="nav-item">
-            <Link className="nav-link" aria-current="page" to="/customer/orders">New Order (4)</Link>
+            <Link className="nav-link" aria-current="page" to="/vendor/orders">New Order (4)</Link>
           </li>
+          }
           <li className="nav-item">
             <Link className="nav-link" aria-current="page" to="/checkout"> Cart ({cartItems})</Link>
           </li>

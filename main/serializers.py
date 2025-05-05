@@ -111,14 +111,22 @@ class CustomerOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OrderItem
         fields = ['id','order','product','qty','price','usd_price']
-        
+
+#Vendor CustomerList and VendorOrderItem list
+class CustomerOrderSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer()
+    class Meta:
+        model = models.Order
+        fields = ['id', 'customer','order_status','total_amount','usd_total_amount']        
 class VendorOrderItemSerializer(serializers.ModelSerializer):
-    order=OrderSerializer()
+    order=CustomerOrderSerializer()
     product=ProductDetailSerializer()
     class Meta:
         model = models.OrderItem
-        fields = ['id','order','product','qty','price','usd_price']
+        fields = ['id','order','product','qty','price','usd_price',]
         
+
+#Order Detail     
 class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OrderItem
@@ -126,8 +134,9 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         
     def __init__(self, *args,**kwargs ):
         super(OrderDetailSerializer, self).__init__(*args, **kwargs)
-        self.Meta.depth =1
+        # self.Meta.depth =1
         
+#customer Address 
 class CustomerAddressSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=models.Customer.objects.all())
     class Meta:
@@ -151,7 +160,8 @@ class ProductRatingSerializer(serializers.ModelSerializer):
     def __init__(self, *args,**kwargs ):
         super(ProductRatingSerializer, self).__init__(*args, **kwargs)
         self.Meta.depth =1
-        
+
+#Category Serializer     
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProductCategory
@@ -169,7 +179,9 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
     def __init__(self, *args,**kwargs ):
         super(CategoryDetailSerializer, self).__init__(*args, **kwargs)
         self.Meta.depth =1
-        
+
+
+#Whistlist of Customer
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model=models.Wishlist

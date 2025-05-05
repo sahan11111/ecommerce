@@ -224,6 +224,17 @@ def update_product_downloads_count(request, product_id):
 class CustomerList(generics.ListCreateAPIView):
     queryset=models.Customer.objects.all()
     serializer_class=serializers.CustomerSerializer
+
+#vendor Customer List
+class VendorCustomerList(generics.ListAPIView):
+    queryset=models.OrderItem.objects.all()
+    serializer_class=serializers.VendorOrderItemSerializer
+    
+    def get_queryset(self):
+        qs=super().get_queryset()
+        vendor_id = self.kwargs['pk']
+        qs=qs.filter(product__vendor__id=vendor_id)
+        return qs
    
 class CustomerDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset=models.Customer.objects.all()
@@ -352,6 +363,12 @@ class OrderDetail(generics.ListAPIView):
         order=models.Order.objects.get(id=order_id)
         order_items=models.OrderItem.objects.filter(order=order)
         return order_items
+    
+#Order Update View
+class OrderModify(generics.RetrieveUpdateDestroyAPIView):
+    queryset=models.Order.objects.all()
+    serializer_class=serializers.OrderSerializer
+    
     
 #Customer Address
 class CustomerAddressViewset(viewsets.ModelViewSet):

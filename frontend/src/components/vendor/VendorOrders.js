@@ -19,7 +19,29 @@ function VendorOrders(){
                 setOrderItems(data.results);
             });
         }
-            console.log(OrderItems);
+        // console.log(OrderItems);
+
+        function changeOrderStatus(order_id, status) {
+            fetch(baseUrl + '/order-modify/' + order_id + '/', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',   // tell server it’s JSON
+                },
+                body: JSON.stringify({                   // convert JS object to JSON string
+                    'order_status': status
+                }),
+            })
+            .then(function(response) {
+                if(response.json().status===200){
+                    fetchData(baseUrl+'/vendor/'+vendor_id+'/orderitems/');
+                }
+            } )
+            .then((data) => {
+                console.log(data);
+                window.location.reload();
+            });
+        }
+            
     return(
         <div className="container mt-4">
         <div className="row ">
@@ -29,7 +51,7 @@ function VendorOrders(){
             <div className="col-md-9 col-12 mb-2">
                 <div className='row'>
                     <div className='table-responsive'>
-                        <table className="table table-striped">
+                        <table className="table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th>Order ID</th>
@@ -70,9 +92,10 @@ function VendorOrders(){
                                                     Change Status
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#">Approve</a></li>
-                                                    <li><a class="dropdown-item" href="#">Sent</a></li>
-                                                    <li><a class="dropdown-item" href="#">Completed</a></li>
+                                                    <li>
+                                                        {!item.order.order_status && <a class="dropdown-item" onClick={()=>changeOrderStatus(item.order.id,true)} href="#">Completed</a>}
+                                                        {item.order.order_status && <a class="dropdown-item" onClick={()=>changeOrderStatus(item.order.id,false)} href="#">Pending</a>}
+                                                    </li>
                                                 </ul>
                                             </div>
                                             </td>
