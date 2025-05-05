@@ -39,6 +39,7 @@ import AddProduct from './components/vendor/AddProduct';
 import UpdateProduct from './components/vendor/UpdateProduct';
 import VendorOrders from './components/vendor/VendorOrders';
 import Customers from './components/vendor/Customers';
+import CustomerOrders from './components/vendor/CustomerOrders';
 import Reports from './components/vendor/Reports';
 import VendorProfile from './components/vendor/VendorProfile';
 import VendorChangePassword from './components/vendor/VendorChangePassword';
@@ -92,6 +93,7 @@ function App() {
           <Route path="/vendor/update-product/:product_id" element={<UpdateProduct />} />
           <Route path="/vendor/orders" element={<VendorOrders />} />
           <Route path="/vendor/customers" element={<Customers />} />
+          <Route path="/customer/:customer_id/orderitems" element={<CustomerOrders />} />
           <Route path="/vendor/reports" element={<Reports />} />
           <Route path="/vendor/profile" element={<VendorProfile />} />
           <Route path="/vendor/change-password" element={<VendorChangePassword />} />

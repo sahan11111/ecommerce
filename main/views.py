@@ -155,7 +155,7 @@ class VendorProductList(generics.ListCreateAPIView):
     
     def get_queryset(self):
         qs=super().get_queryset()
-        vendor_id = self.kwargs['pk']
+        vendor_id = self.kwargs['vendor_id']
         qs=qs.filter(vendor__id=vendor_id)
         return qs
     
@@ -354,7 +354,16 @@ class VendorOrderItemList(generics.ListAPIView):
         vendor_id = self.kwargs['pk']
         qs=qs.filter(product__vendor__id=vendor_id)
         return qs
-    
+#Vendor Customer Orderitems list
+class VendorCustomerOrderItemList(generics.ListAPIView):
+    queryset=models.OrderItem.objects.all()
+    serializer_class=serializers.VendorCustomerOrderItemSerializer
+    def get_queryset(self):
+        qs=super().get_queryset()
+        customer_id = self.kwargs['customer_id']
+        vendor_id = self.kwargs['vendor_id']
+        qs=qs.filter(order__customer__id=customer_id,product__vendor__id=vendor_id)
+        return qs
 class OrderDetail(generics.ListAPIView):
     # queryset=models.OrderItem.objects.all()
     serializer_class=serializers.OrderDetailSerializer
@@ -363,6 +372,19 @@ class OrderDetail(generics.ListAPIView):
         order=models.Order.objects.get(id=order_id)
         order_items=models.OrderItem.objects.filter(order=order)
         return order_items
+    
+#Order Detete Customer Order View
+@csrf_exempt
+def delete_customer_order(request, customer_id, order_id):
+    if request.method == 'DELETE':
+        try:
+            # Fetch the order using the customer_id and order_id
+            order = models.Order.objects.get(id=order_id, customer_id=customer_id)
+            order.delete()
+
+            return JsonResponse({'bool': True})
+        except models.Order.DoesNotExist:
+            return JsonResponse({'bool': False, 'message': 'Order not found'})
     
 #Order Update View
 class OrderModify(generics.RetrieveUpdateDestroyAPIView):

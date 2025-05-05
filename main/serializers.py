@@ -99,11 +99,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = models.OrderItem
         fields = ['id','order','product','qty','price','usd_price']
         
-    def to_representation(self, instance):
-        response=super().to_representation(instance)
-        response['order']=OrderDetailSerializer(instance.order).data
-        response['product']=ProductDetailSerializer(instance.product).data
-        return response
+
         
 class CustomerOrderItemSerializer(serializers.ModelSerializer):
     order=OrderSerializer()
@@ -125,7 +121,14 @@ class VendorOrderItemSerializer(serializers.ModelSerializer):
         model = models.OrderItem
         fields = ['id','order','product','qty','price','usd_price',]
         
-
+#vendor customer orderitem list
+class VendorCustomerOrderItemSerializer(serializers.ModelSerializer):
+    order=CustomerOrderSerializer()
+    product=ProductDetailSerializer()
+    class Meta:
+        model = models.OrderItem
+        fields = ['id','order','product','qty','price','usd_price']
+        
 #Order Detail     
 class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:

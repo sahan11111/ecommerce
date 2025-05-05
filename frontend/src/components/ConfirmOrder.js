@@ -85,33 +85,34 @@ function ConfirmOrder() {
     }
 
     function orderItems(order_id) {
-        var previousCart = localStorage.getItem('cartData');
-        var cartJson = JSON.parse(previousCart);
-        // console.log(cartJson);
-
-        if (cartJson !== null) {
-            var sum=0;
-            cartJson.map((cart, index) => {
-                const formData = new FormData(); // ✅ Move inside the loop
+        const previousCart = localStorage.getItem('cartData');
+        const cartJson = JSON.parse(previousCart);
+    
+        if (cartJson && cartJson.length > 0) {
+            const requests = cartJson.map((cart) => {
+                const formData = new FormData();
                 formData.append('order', order_id);
                 formData.append('product', cart.product.id);
                 formData.append('qty', 1);
                 formData.append('price', cart.product.price);
                 formData.append('usd_price', cart.product.usd_price);
-
-                axios.post(baseUrl + '/orderitems/', formData)
-                    .then(function (response) {
-                        // remove cart item from local storage
-                        cartJson.splice(index, 1);
-                        localStorage.setItem('cartData', JSON.stringify(cartJson));
-                        setCartData(cartJson);
-                    })
-                    .catch(function (error) {
-                        console.log('Error during order item confirmation:', error);
-                    });
+    
+                return axios.post(baseUrl + '/orderitems/', formData);
             });
+    
+            Promise.all(requests)
+                .then(() => {
+                    // ✅ Remove cart only after all items are successfully posted
+                    localStorage.removeItem('cartData');
+                    setCartData([]);
+                    console.log('Cart cleared after order creation');
+                })
+                .catch((error) => {
+                    console.error('Error while saving order items:', error);
+                });
         }
     }
+    
 
     function changePaymentMethod(payMethod) {
         setPayMethod(payMethod);

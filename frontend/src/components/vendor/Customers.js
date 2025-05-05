@@ -17,6 +17,28 @@ function Customers(){
                 setCustomerList(data.results);
             });
         }
+    function showConfirm(customer_id, order_id) {
+        var _confirm = window.confirm('Are you sure to delete this order?');
+        if (_confirm === true) {
+            fetch(baseUrl + '/delete-customer-order/' + customer_id + '/' + order_id + '/', {
+                method: 'DELETE',
+            })
+            .then((response) => response.json()) // Ensure we parse the response as JSON
+            .then((data) => {
+                if (data.bool === true) {
+                    // Fetch the updated customer order list after deletion
+                    fetchData(baseUrl+'/vendor/'+vendor_id+'/customer/'+customer_id+'/orderitems/');
+                } else {
+                    alert('Failed to delete the order.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred.');
+            });
+        }
+    }
+        
     return(
         <div className="container mt-4">
         <div className="row ">
@@ -40,13 +62,13 @@ function Customers(){
                             
                             {CustomerList.map((item, index) => (
                                 <tr >
-                                    <td>{index + 1}</td>
+                                    <td>{item.order.customer.id}</td>
                                     <td>{item.order.customer.user.first_name} {item.order.customer.user.last_name}</td>
                                     <td>{item.order.customer.user.email}</td>
                                     <td>{item.order.customer.mobile}</td>
                                     <td>
-                                        <button className='btn btn-primary btn-sm'>Orders</button>
-                                        <button className='btn btn-danger btn-sm ms-2'>Remove from list</button>
+                                        <Link to={`/customer/${item.order.customer.id}/orderitems/`} className='btn btn-primary btn-sm'>Orders</Link>
+                                        <button onClick={()=>showConfirm(item.order.customer.id,item.order.id)} className='btn btn-danger btn-sm ms-2'>Remove from list</button>
                                     </td>
                                 </tr>
                             ))}
