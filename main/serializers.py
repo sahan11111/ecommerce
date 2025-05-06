@@ -14,7 +14,7 @@ class VendorSerializer(serializers.ModelSerializer):
 class VendorDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Vendor
-        fields = ['id','user', 'address']
+        fields = ['id','user', 'address','mobile','profile_img']
         
     def to_representation(self, instance):
         response=super().to_representation(instance)
@@ -66,6 +66,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
         fields = ['id', 'first_name', 'last_name','username','email','password']
+        
+
         
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
