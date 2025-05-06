@@ -9,6 +9,7 @@ urlpatterns = [
     #Vendor
     path('vendors/',views.VendorList.as_view()),
     path('vendor/<int:pk>/',views.VendorDetail.as_view()),
+    path('vendor-daily-report/<int:pk>/',views.VendorDailyReport.as_view()),
     path('vendor/register/',views.vendor_register,name='vendor_register'),
     path('vendor/login/',views.vendor_login,name='vendor_login'),
     path('vendor/<int:pk>/orderitems/',views.VendorOrderItemList.as_view()),

@@ -20,6 +20,10 @@ class VendorDetailSerializer(serializers.ModelSerializer):
         response=super().to_representation(instance)
         response['user']=UserSerializer(instance.user).data
         return response
+class VendorDailyReport(serializers.ModelSerializer):
+    class Meta:
+        model = models.Vendor
+        fields = ['id','user', 'address','show_chart_daily_orders','show_chart_monthly_orders','show_chart_yearly_orders']
 
 class ProductListSerializer(serializers.ModelSerializer):
     tag_list = serializers.SerializerMethodField()
@@ -198,4 +202,7 @@ class WishlistSerializer(serializers.ModelSerializer):
         response['customer']=CustomerSerializer(instance.customer).data
         response['product']=ProductDetailSerializer(instance.product).data
         return response
+    
+    
+
     

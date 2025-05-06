@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Count
+import datetime
 
 # Create your models here.
 #vendor module
@@ -11,6 +13,56 @@ class Vendor(models.Model):
     
     def __str__(self):
         return self.user.username
+    
+    @property
+    def show_chart_daily_orders(self):
+        orders=OrderItem.objects.filter(product__vendor=self).values('order__order_time__date').annotate(count=Count('id'))
+        dateList=[]
+        countList=[]
+        dataSet={}
+        if orders:
+            for order in orders:
+                dateList.append(order['order__order_time__date'])
+                countList.append(order['count'])
+        dataSet={'date':dateList,
+                 'data':countList
+                 }
+        return dataSet
+    
+    @property
+    def show_chart_monthly_orders(self):
+        orders=OrderItem.objects.filter(product__vendor=self).values('order__order_time__month').annotate(count=Count('id'))
+        monthList=[]
+        countList=[]
+        dataSet={}
+        if orders:
+            for order in orders:
+                monthinteger=order['order__order_time__month']
+                month=datetime.date(1900, monthinteger,1).strftime('%B')
+                monthList.append(month)
+                countList.append(order['count'])
+        dataSet={'month':monthList,
+                 'data':countList
+                 }
+        return dataSet
+    
+    @property
+    def show_chart_yearly_orders(self):
+        orders=OrderItem.objects.filter(product__vendor=self).values('order__order_time__year').annotate(count=Count('id'))
+        yearList=[]
+        countList=[]
+        dataSet={}
+        if orders:
+            for order in orders:
+                yearList.append(order['order__order_time__year'])
+                countList.append(order['count'])
+        dataSet={'year':yearList,
+                 'data':countList
+                 }
+        return dataSet
+                
+        
+            
 
 #Product Catetory
 class ProductCategory(models.Model):

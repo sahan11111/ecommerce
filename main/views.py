@@ -7,7 +7,7 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-
+from django.db.models import Count
 
 # Create your views here.
 class VendorList(generics.ListCreateAPIView):
@@ -22,7 +22,11 @@ class VendorDetail(generics.RetrieveUpdateDestroyAPIView):
     # permission_classes=[
     #     permissions.IsAuthenticated
     # ]
-
+    
+#vendor Daily Report
+class VendorDailyReport(generics.RetrieveUpdateDestroyAPIView):
+    queryset=models.Vendor.objects.all()
+    serializer_class=serializers.VendorDailyReport
 @csrf_exempt   
 def vendor_login(request):
     username = request.POST.get('username')
@@ -354,6 +358,9 @@ class VendorOrderItemList(generics.ListAPIView):
         vendor_id = self.kwargs['pk']
         qs=qs.filter(product__vendor__id=vendor_id)
         return qs
+    
+
+
 #Vendor Customer Orderitems list
 class VendorCustomerOrderItemList(generics.ListAPIView):
     queryset=models.OrderItem.objects.all()
