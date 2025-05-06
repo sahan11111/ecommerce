@@ -56,6 +56,7 @@ urlpatterns = [
     path('customer/<int:pk>/address-list/',views.CustomerAddressList.as_view()),
     path('mark-default-address/<int:pk>/',views.mark_default_address,name='mark_default_address'),
     path('customer/dashboard/<int:pk>/',views.customer_dashboard,name='customer_dashboard'),
+    path('vendor/dashboard/<int:pk>/',views.vendor_dashboard,name='vendor_dashboard'),
     
 ]
 urlpatterns+=router.urls

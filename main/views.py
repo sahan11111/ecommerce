@@ -493,5 +493,21 @@ def customer_dashboard(request,pk):
             'totalAddress':totalAddress,
         }
 
-    return JsonResponse(msg)    
+    return JsonResponse(msg)
+
+
+#Vendor Dashboard
+def vendor_dashboard(request, pk):
+    totalProducts = models.Product.objects.filter(vendor__id=pk).count()
+    totalOrders = models.Order.objects.filter(order_items__product__vendor__id=pk).count()
+    totalCustomers = models.OrderItem.objects.filter(product__vendor__id=pk).values('order__customer').distinct().count()
+
+    data = {
+        'totalProducts': totalProducts,
+        'totalOrders': totalOrders,
+        'totalCustomers': totalCustomers,
+    }
+
+    return JsonResponse(data)
+ 
     
