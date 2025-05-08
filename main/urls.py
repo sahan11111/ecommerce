@@ -12,6 +12,7 @@ urlpatterns = [
     path('vendor-daily-report/<int:pk>/',views.VendorDailyReport.as_view()),
     path('vendor/register/',views.vendor_register,name='vendor_register'),
     path('vendor/login/',views.vendor_login,name='vendor_login'),
+    path('vendor-change-password/<int:vendor_id>/',views.vendor_change_password,name='vendor_change_password'),
     path('vendor/<int:pk>/orderitems/',views.VendorOrderItemList.as_view()),
     path('vendor/<int:pk>/customers/',views.VendorCustomerList.as_view()),
     path('vendor/<int:vendor_id>/customer/<int:customer_id>/orderitems/', views.VendorCustomerOrderItemList.as_view()),
@@ -37,6 +38,7 @@ urlpatterns = [
     path('user/<int:pk>/',views.UserDetail.as_view()),
     path('customer/login/',views.customer_login,name='customer_login'),
     path('customer/register/',views.customer_register,name='customer_register'),
+    path('customer-change-password/<int:customer_id>/',views.customer_change_password,name='customer_change_password'),
     
     #Orders
     path('orders/',views.OrderList.as_view()),

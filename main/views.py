@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .import serializers
+from rest_framework.exceptions import *
 from rest_framework import generics,permissions,status,pagination,viewsets
 from .import models
 from django.views.decorators.csrf import csrf_exempt
@@ -8,6 +9,9 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db.models import Count
+from django.contrib.auth.hashers import make_password
+from django.shortcuts import get_object_or_404
+import json
 
 # Create your views here.
 class VendorList(generics.ListCreateAPIView):
@@ -23,15 +27,16 @@ class VendorDetail(generics.RetrieveUpdateDestroyAPIView):
     #     permissions.IsAuthenticated
     # ]
     
-#vendor Daily Report
-class VendorDailyReport(generics.RetrieveUpdateDestroyAPIView):
-    queryset=models.Vendor.objects.all()
-    serializer_class=serializers.VendorDailyReport
+
+
+
 @csrf_exempt   
 def vendor_login(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
-    user = authenticate(username=username, password=password)  # This will work with hashed passwords
+
+    # Authenticate using Django's built-in method
+    user = authenticate(username=username, password=password)  # This only works if password is hashed correctly
     
     if user:
         vendor = models.Vendor.objects.get(user=user)
@@ -60,15 +65,15 @@ def vendor_register(request):
     password = request.POST.get('password')
     
     try:
-        user = User.objects.create(
+        # ❗ PROBLEM: Previously used User.objects.create() + set_password()
+        # 🔧 FIX: Use create_user() instead — it hashes password properly
+        user = User.objects.create_user(
             first_name=first_name,
             last_name=last_name,
             username=username,
             email=email,
+            password=password  # This will be hashed internally
         )
-        # Hash the password before saving
-        user.set_password(password)
-        user.save()
         
         # Create vendor
         try:
@@ -96,6 +101,47 @@ def vendor_register(request):
 
     return JsonResponse(msg)
 
+
+@csrf_exempt
+def vendor_change_password(request, vendor_id):
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            password = data.get('password')
+            if not password:
+                return JsonResponse({'bool': False, 'msg': 'Password is required.'}, status=400)
+
+            vendor = get_object_or_404(models.Vendor, id=vendor_id)
+            user = vendor.user
+            user.set_password(password)  # Hash the new password properly
+            user.save()
+
+            return JsonResponse({'bool': True, 'msg': 'Password changed successfully!'})
+        except json.JSONDecodeError:
+            return JsonResponse({'bool': False, 'msg': 'Invalid JSON data.'}, status=400)
+    else:
+        return JsonResponse({'bool': False, 'msg': 'Method Not Allowed.'}, status=405)
+
+
+
+# @csrf_exempt
+# def vendor_change_password(request, vendor_id):
+#     password = request.POST.get('password')
+#     vendor = models.Vendor.objects.get(id=vendor_id)
+#     user = vendor.user
+#     user.password = make_password(password)
+#     user.save()
+    
+#     msg = {'bool': True, 'msg': 'Password changed successfully!'}
+#     return JsonResponse(msg)
+
+
+    # return JsonResponse({'bool':True,'msg':'Password changed successfully!'})
+    
+#vendor Daily Report
+class VendorDailyReport(generics.RetrieveUpdateDestroyAPIView):
+    queryset=models.Vendor.objects.all()
+    serializer_class=serializers.VendorDailyReport
     
 class ProductList(generics.ListCreateAPIView):
     queryset=models.Product.objects.all()
@@ -178,7 +224,6 @@ class TagProductList(generics.ListCreateAPIView):
         qs = qs.filter(tags__icontains=tag)  # Filter by tag name
         return qs   
 
-from rest_framework.exceptions import NotFound
 
 class RelatedProductList(generics.ListCreateAPIView):
     queryset = models.Product.objects.all().order_by('id') 
@@ -285,9 +330,8 @@ def customer_register(request):
             last_name=last_name,
             username=username,
             email=email,
+            password=password,
         )
-        user.set_password(password)  # ✅ important, hashes the password
-        user.save()
 
         # create customer
         try:
@@ -314,6 +358,25 @@ def customer_register(request):
 
     return JsonResponse(msg)
 
+@csrf_exempt
+def customer_change_password(request, customer_id):
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            password = data.get('password')
+            if not password:
+                return JsonResponse({'bool': False, 'msg': 'Password is required.'}, status=400)
+
+            customer = get_object_or_404(models.Customer, id=customer_id)
+            user = customer.user
+            user.set_password(password)  # Hash the new password properly
+            user.save()
+
+            return JsonResponse({'bool': True, 'msg': 'Password changed successfully!'})
+        except json.JSONDecodeError:
+            return JsonResponse({'bool': False, 'msg': 'Invalid JSON data.'}, status=400)
+    else:
+        return JsonResponse({'bool': False, 'msg': 'Method Not Allowed.'}, status=405)
 
     
 class OrderList(generics.ListCreateAPIView):
