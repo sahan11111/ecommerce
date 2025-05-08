@@ -60,12 +60,16 @@ return(
         <td className='text-center'>
             {
                 item.order.order_status===true && <button  onClick={()=>countDownloads(item.product.id)}  className="btn btn-primary btn-sm">Download
-                <span className='badge text-dark bg-white'>{TotalDownloads}</span>
+                <span className='badge text-dark bg-white ms-1'>{TotalDownloads}</span>
                 </button>
             }
+            <Link  to={'/customer/add-review/'+item.product.id} className="btn btn-success btn-sm ms-2">Review<i className="fa fa-star ms-1" style={starIcon}></i>
+                </Link>
         </td>
     </tr>
 );
 }
-
+const starIcon = {
+    color: 'gold'
+  };
 export default OrderRow;

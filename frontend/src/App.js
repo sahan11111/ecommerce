@@ -29,6 +29,7 @@ import ChangePassword from './components/customer/ChangePassword';
 import AddressList from './components/customer/AddressList';
 import AddAddress from './components/customer/AddAddress';
 import UpdateAddress from './components/customer/UpdateAddress';
+import AddReview from './components/customer/AddReview';
 // Vendor Panel
 import VendorRegister from './components/vendor/VendorRegister';
 import VendorLogin from './components/vendor/VendorLogin';
@@ -85,6 +86,7 @@ function App() {
           <Route path="/customer/addresses" element={<AddressList />} />
           <Route path="/customer/add-address" element={<AddAddress />} />
           <Route path="/customer/update-address/:address_id" element={<UpdateAddress />} />
+          <Route path="/customer/add-review/:product_id" element={<AddReview />} />
 
           {/* Vendor Panel Routes */}
           <Route path="/vendor/register" element={<VendorRegister />} />

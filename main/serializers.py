@@ -164,11 +164,16 @@ class CustomerAddressSerializer(serializers.ModelSerializer):
 class ProductRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProductRating
-        fields = '__all__' 
+        fields = ['id','customer','product','rating','review','add_time'] 
         
     def __init__(self, *args,**kwargs ):
         super(ProductRatingSerializer, self).__init__(*args, **kwargs)
-        self.Meta.depth =1
+        
+    def to_representation(self, instance):
+        response=super().to_representation(instance)
+        response['customer']=CustomerSerializer(instance.customer).data
+        response['product']=ProductDetailSerializer(instance.product).data
+        return response
 
 #Category Serializer     
 class CategorySerializer(serializers.ModelSerializer):

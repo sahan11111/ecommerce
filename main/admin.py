@@ -12,7 +12,7 @@ class CustomerAdmin(admin.ModelAdmin):
 admin.site.register(models.Customer,CustomerAdmin)
 # admin.site.register(models.OrderItem)
 admin.site.register(models.CustomerAddress)
-admin.site.register(models.ProductRating)
+# admin.site.register(models.ProductRating)
 admin.site.register(models.ProductImage)
 
 class ProductImageInline(admin.StackedInline):
@@ -37,4 +37,8 @@ admin.site.register(models.OrderItem, OrderItemAdmin)
 class WishlistAdmin(admin.ModelAdmin):
     list_display=['id','product','customer']
 admin.site.register(models.Wishlist, WishlistAdmin)
+
+class ProductRatingAdmin(admin.ModelAdmin):
+    list_display=['id','product','customer','review','rating','add_time']
+admin.site.register(models.ProductRating, ProductRatingAdmin)
 

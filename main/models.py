@@ -166,6 +166,9 @@ class ProductRating(models.Model):
     review=models.TextField()
     add_time=models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        verbose_name_plural='Product Rating'
+    
     def __str__(self):
         return f'{self.rating} - {self.review}'
     
