@@ -51,8 +51,8 @@ function VendorProfile(){
         });
     };
     const submitHandler = (event) => {
-        event.preventDefault(); // Prevent form reload
-    
+        // event.preventDefault(); // Prevent form reload
+        window.location.reload();
         
         const formData = new FormData();
         formData.append('user', ProfileData.user_id);

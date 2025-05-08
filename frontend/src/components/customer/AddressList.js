@@ -39,6 +39,25 @@ function AddressList(){
             console.error(error);
         });
     }
+    function deleteAddress(address_id){
+        const formData = new FormData();
+        formData.append('address_id', address_id);
+        // console.log('form:', formData.data);
+    
+        // Submit wishlist data to the backend
+        axios.post(baseUrl + '/delete-address/'+address_id+'/', formData)
+            .then(function (response) {
+                // console.log(response);
+                if(response.data.bool===true){
+                    window.location.reload();
+                    alert('Deleted');
+                    document.getElementById('row'+address_id).remove();
+                }
+            })
+            .catch(function (error) {
+                console.log('Error during deleting address confirmation:', error);
+            });
+    }
     return(
         <div className="container mt-4">
         <div className="row ">
@@ -59,7 +78,13 @@ function AddressList(){
                                         <div className='card-body text-muted  '>
                                             <h6>
                                                 {address.default_address===true && <><span  className='badge bg-success mb-2 '><i className='fa fa-check-circle'></i></span><br/></>}
-                                                {!address.default_address && <><span onClick={()=>DefaultAddressHandler(address.id)} role='button'  className='badge bg-secondary mb-2 '>Mark Default</span><br/></>}
+                                                {!address.default_address && 
+                                                <>
+                                                    <span onClick={()=>DefaultAddressHandler(address.id)} role='button'  className='badge bg-secondary mb-2 '>Mark Default</span>
+                                                    <span className='image-box d-inline  p-3 my-2'  onClick={()=>deleteAddress(address.id)}><i className='fa fa-trash text-danger'style={styles.deleteBtn} role='button'></i></span>
+                                                    <br/>
+                                                </>
+                                                }
                                                 <Link to={`/customer/update-address/${address.id}`}><label>{address.address}</label></Link>
                                             </h6>
                                         </div>
@@ -76,4 +101,11 @@ function AddressList(){
 
     )
 }
+const styles={
+    'deleteBtn':{
+        'position':'absolute',
+
+    }
+};
+
 export default AddressList;

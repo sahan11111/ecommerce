@@ -488,6 +488,19 @@ def mark_default_address(request,pk):
         if res:
             msg['bool'] = True
         
+        return JsonResponse(msg)
+    
+@csrf_exempt
+def delete_address(request,pk):
+    if request.method == 'POST':
+        address_id = request.POST.get('address_id')
+        models.CustomerAddress.objects.update(default_address=False)
+        res = models.CustomerAddress.objects.filter(id=address_id).delete()
+        
+        msg = {'bool': False}
+        if res:
+            msg['bool'] = True
+        
         return JsonResponse(msg)     
     
     

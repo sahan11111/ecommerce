@@ -57,6 +57,7 @@ urlpatterns = [
     
     #addrestList/dashboard
     path('customer/<int:pk>/address-list/',views.CustomerAddressList.as_view()),
+    path('delete-address/<int:pk>/', views.delete_address, name='delete_address'),
     path('mark-default-address/<int:pk>/',views.mark_default_address,name='mark_default_address'),
     path('customer/dashboard/<int:pk>/',views.customer_dashboard,name='customer_dashboard'),
     path('vendor/dashboard/<int:pk>/',views.vendor_dashboard,name='vendor_dashboard'),
