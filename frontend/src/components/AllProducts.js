@@ -59,9 +59,7 @@ const baseUrl='http://127.0.0.1:8000/api';
             {
                 Products.map((product,index)=><SingleProduct product={product} />)
             }
-        {/* Product Box */}
 
-        {/* Product Box End */}
        
         </div>
         <nav aria-label="Page navigation example">

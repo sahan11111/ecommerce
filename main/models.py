@@ -60,6 +60,13 @@ class Vendor(models.Model):
                  'data':countList
                  }
         return dataSet
+    
+    #Total Product
+    @property
+    def total_products(self):
+        product_count=Product.objects.filter(vendor=self).count()
+        return product_count
+    
                 
         
             

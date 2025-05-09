@@ -5,7 +5,7 @@ from .import models
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Vendor
-        fields = ['id','user', 'address']
+        fields = ['id','user', 'address','mobile','profile_img']
         
     def __init__(self, *args,**kwargs ):
         super(VendorSerializer, self).__init__(*args, **kwargs)
@@ -14,7 +14,7 @@ class VendorSerializer(serializers.ModelSerializer):
 class VendorDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Vendor
-        fields = ['id','user', 'address','mobile','profile_img']
+        fields = ['id','user', 'address','mobile','profile_img','total_products']
         
     def to_representation(self, instance):
         response=super().to_representation(instance)

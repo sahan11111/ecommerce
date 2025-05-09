@@ -17,6 +17,8 @@ import Checkout from './components/Checkout';
 import ConfirmOrder from './components/ConfirmOrder';
 import OrderSuccess from './components/OrderSuccess';
 import OrderFailure from './components/OrderFailure';
+import AllVendors from './components/AllVendors';
+import VendorDetail from './components/VendorDetail';
 // Customer Panel
 import Register from './components/customer/Register';
 import Login from './components/customer/Login';
@@ -63,6 +65,7 @@ function App() {
       <CartContext.Provider value={{ cartData, setCartData }}>
         <Header />
         <Routes>
+          {/* Home Page Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<AllProducts />} />
           <Route path="/categories" element={<Categories />} />
@@ -73,6 +76,10 @@ function App() {
           <Route path="/confirm-order" element={<ConfirmOrder />} />
           <Route path="/order/success" element={<OrderSuccess />} />
           <Route path="/order/failure" element={<OrderFailure />} />
+          <Route path="/vendors" element={<AllVendors />} />
+          <Route path="/vendor/:vendor_id" element={<VendorDetail />} />
+
+
 
           {/* Customer Panel Routes */}
           <Route path="/customer/register" element={<Register />} />

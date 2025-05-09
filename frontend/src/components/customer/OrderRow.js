@@ -32,6 +32,22 @@ function OrderRow(props){
                 console.error('Downloads Error:', error);
             });
     };
+    const customer_id = localStorage.getItem('customer_id');
+    function showConfirm(order_id) {
+    var _confirm = window.confirm('Are you sure to delete this order?');
+    if (_confirm === true) {
+        fetch(baseUrl + '/delete-customer-order/' + customer_id + '/' + order_id + '/', {
+        method: 'DELETE',
+        }).then((response) => {
+        if (response.ok) {
+            window.location.reload(); // refresh the page
+        } else {
+            alert('Failed to delete order.');
+        }
+        });
+    }
+    }
+
 return(
     <tr>
         <td className='text-center'>{index+1}</td>
@@ -59,12 +75,19 @@ return(
         </td>
         <td className='text-center'>
             {
-                item.order.order_status===true && <button  onClick={()=>countDownloads(item.product.id)}  className="btn btn-primary btn-sm">Download
+                item.order.order_status===true &&
+                <>
+                <button  onClick={()=>countDownloads(item.product.id)}  className="btn btn-primary btn-sm">Download
                 <span className='badge text-dark bg-white ms-1'>{TotalDownloads}</span>
                 </button>
-            }
-            <Link  to={'/customer/add-review/'+item.product.id} className="btn btn-success btn-sm ms-2">Review<i className="fa fa-star ms-1" style={starIcon}></i>
+                <Link  to={'/customer/add-review/'+item.product.id} className="btn btn-success btn-sm ms-2">Review<i className="fa fa-star ms-1" style={starIcon}></i>
                 </Link>
+                </> 
+            }
+            {
+                item.order.order_status===false &&
+            <button onClick={()=>showConfirm(item.order.id)} className='btn btn-danger btn-sm ms-2'>Remove from list</button>
+            }
         </td>
     </tr>
 );

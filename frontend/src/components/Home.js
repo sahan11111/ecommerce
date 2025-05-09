@@ -198,7 +198,7 @@ console.log(ReviewList);
             </div>
             {/* End Popular Product  */}
             {/* Popular Sellers  */}
-            <h3 className='mb-4'>Popular Sellers<a href='#' className='float-end btn btn-dark '>View All Sellers<i class="fa-solid fa-arrow-right-long"></i></a></h3>
+            <h3 className='mb-4'>Popular Seller<Link to='/vendors' className='float-end btn btn-dark '>View All Sellers<i class="fa-solid fa-arrow-right-long"></i></Link></h3>
               <div className="row mb-4">
             {/* Seller Box */}
               <div className="col-12 col-md-3 mb-4" >
