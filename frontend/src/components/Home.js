@@ -3,6 +3,7 @@ import logo from '../logo.svg';
 import SingleProduct from './SingleProduct';
 import { useState,useEffect } from 'react';
 import Testimonial from './Testimonial';
+import SingleVendor from './SingleVendor';
 function Home(){
   
 
@@ -35,10 +36,12 @@ function Home(){
   const baseUrl = 'http://127.0.0.1:8000/api';
   const [products, setProducts] = useState([]);
   const [ReviewList, setReviewList] = useState([]);
+  const [VendorList,setVendorList]=useState([]);
 
   useEffect(() => {
     fetchData(baseUrl + '/products'); // Adjusted API URL if needed
     fetchTestimonialData(baseUrl+'/productrating/');
+    fetchPopularVendors(baseUrl+'/vendors/?fetch_limit=4')
   }, []);
 
   function fetchData(baseurl) {
@@ -60,7 +63,16 @@ function Home(){
         setReviewList(data.results);
     });
 }
-console.log(ReviewList);
+
+  function fetchPopularVendors(baseurl){
+    fetch(baseurl)
+    .then((response)=>response.json())
+    .then((data)=>{
+        console.log(data);
+        setVendorList(data.results);
+    });
+}
+// console.log(ReviewList);
   return(
         <main className='mt-4'>
           <div className="container">
@@ -199,60 +211,11 @@ console.log(ReviewList);
             {/* End Popular Product  */}
             {/* Popular Sellers  */}
             <h3 className='mb-4'>Popular Seller<Link to='/vendors' className='float-end btn btn-dark '>View All Sellers<i class="fa-solid fa-arrow-right-long"></i></Link></h3>
-              <div className="row mb-4">
-            {/* Seller Box */}
-              <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Seller Name</h4>
-              </div>
-              <div className='card-footer'>
-                Categories : <a href='#'>Python</a>,<a href='#'>PHP</a>
-            </div>
-            </div>
-            </div>
-            {/* Seller Box End */}
-            {/* Seller Box */}
-            <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Seller Name</h4>
-              </div>
-              <div className='card-footer'>
-              Categories : <a href='#'>React.js</a>,<a href='#'>PHP</a>
+            <div className="row mb-4">
+                        {
+                        VendorList.map((vendor)=><SingleVendor vendor={vendor} />)
 
-            </div>
-            </div>
-            </div>
-            {/* Seller Box End */}
-            {/* Seller Box */}
-            <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Seller Name</h4>
-              </div>
-              <div className='card-footer'>
-              Categories : <a href='#'>Java</a>,<a href='#'>JavaScript</a>
-            </div>
-            </div>
-            </div>
-            {/* Seller Box End */}
-            {/* Seller Box */}
-            <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Seller Name</h4>
-              </div>
-              <div className='card-footer'>
-              Categories : <a href='#'>Ruby</a>,<a href='#'>Rust</a>
-            </div>
-            </div>
-            </div>
-            {/* Seller Box End */}
+                        }
             </div>
             {/* End Popular Sellers  */}
             {/* Rating and Review */}

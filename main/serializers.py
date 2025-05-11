@@ -30,7 +30,7 @@ class ProductListSerializer(serializers.ModelSerializer):
     product_rating=serializers.StringRelatedField(many=True,read_only=True)
     class Meta:
         model = models.Product
-        fields = ['id','category','vendor','title','slug','tag_list','detail','price','usd_price','product_rating','image','product_file','tags','published_status']
+        fields = ['id','category','vendor','title','slug','tag_list','detail','price','usd_price','product_rating','image','product_file','tags','published_status','downloads']
         
     def tag_list(self, obj):
         return obj.tags.split(',') if obj.tags else []

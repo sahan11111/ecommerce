@@ -20,6 +20,9 @@ function SingleVendor(props) {
                         </Link>
                     </h4>
                 </div>
+                <div className='card-footer'>
+                  Categories : <a href='#'>Python</a>,<a href='#'>PHP</a>
+                </div> 
             </div>
         </div>
     );

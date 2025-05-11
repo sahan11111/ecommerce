@@ -12,11 +12,32 @@ from django.db.models import Count
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 import json
-
+from django.db.models import Sum,IntegerField
+from django.db.models.functions import Cast
 # Create your views here.
 class VendorList(generics.ListCreateAPIView):
     queryset=models.Vendor.objects.all()
     serializer_class=serializers.VendorSerializer
+    
+
+    def get_queryset(self):
+        qs = models.Vendor.objects.all()
+
+        if 'fetch_limit' in self.request.GET:
+            try:
+                limit = int(self.request.GET.get('fetch_limit'))
+
+                # Sum the downloads across all products per vendor
+                qs = qs.annotate(
+                    total_downloads=Sum(
+                        Cast('product__downloads', IntegerField())
+                    )
+                ).order_by('-total_downloads', '-id')[:limit]
+
+            except ValueError:
+                pass  # fallback to unfiltered queryset
+
+        return qs
     # permission_classes=[
     #     permissions.IsAuthenticated
     # ]
