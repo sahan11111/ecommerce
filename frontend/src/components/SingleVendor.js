@@ -10,6 +10,7 @@ function SingleVendor(props) {
                         src={props.vendor.profile_img}
                         className="card-img-top"
                         alt={props.vendor.user.id}
+                        style={{ height: "180px", objectFit: "cover" }}
                     />
                 </Link>
                 <div className="card-body">

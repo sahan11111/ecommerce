@@ -432,6 +432,7 @@ class CustomerOrderItemList(generics.ListAPIView):
         qs=qs.filter(order__customer__id=customer_id)
         return qs
 
+
 #Vendor Order Item List
 class VendorOrderItemList(generics.ListAPIView):
     queryset=models.OrderItem.objects.all()
@@ -533,7 +534,22 @@ class ProductRatingViewset(viewsets.ModelViewSet):
 class CategoryList(generics.ListCreateAPIView):
     queryset=models.ProductCategory.objects.all()
     serializer_class=serializers.CategorySerializer
-    pagination_class=pagination.PageNumberPagination 
+    def get_queryset(self):
+        qs = models.ProductCategory.objects.annotate(
+            total_downloads=Sum(
+                Cast('catogary_product__downloads', IntegerField())  # Use correct related_name here
+            )
+        )
+
+        if 'fetch_limit' in self.request.GET:
+            try:
+                limit = int(self.request.GET.get('fetch_limit'))
+                qs = qs.order_by('-total_downloads', '-id')[:limit]
+            except ValueError:
+                pass  # fallback to unfiltered queryset
+
+        return qs
+
  
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset=models.ProductCategory.objects.all()
@@ -587,7 +603,7 @@ def remove_from_wishlist(request):
 #Customer Dashboard
 def customer_dashboard(request,pk):
     customer_id = pk
-    totalOrders=models.Order.objects.filter(customer__id=customer_id).count()
+    totalOrders = models.OrderItem.objects.filter(order__customer__id=customer_id).count()
     totalWishlist=models.Wishlist.objects.filter(customer__id=customer_id).count()
     totalAddress=models.CustomerAddress.objects.filter(customer__id=customer_id).count()
     

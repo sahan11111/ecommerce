@@ -4,6 +4,7 @@ import SingleProduct from './SingleProduct';
 import { useState,useEffect } from 'react';
 import Testimonial from './Testimonial';
 import SingleVendor from './SingleVendor';
+import SingleCategory from './SingleCategory';
 function Home(){
   
 
@@ -37,11 +38,13 @@ function Home(){
   const [products, setProducts] = useState([]);
   const [ReviewList, setReviewList] = useState([]);
   const [VendorList,setVendorList]=useState([]);
+  const [CategoriesList,setCategoriesList]=useState([]);
 
   useEffect(() => {
     fetchData(baseUrl + '/products'); // Adjusted API URL if needed
     fetchTestimonialData(baseUrl+'/productrating/');
-    fetchPopularVendors(baseUrl+'/vendors/?fetch_limit=4')
+    fetchPopularVendors(baseUrl+'/vendors/?fetch_limit=4');
+    fetchPopularCategory(baseUrl+'/categories/?fetch_limit=4')
   }, []);
 
   function fetchData(baseurl) {
@@ -72,7 +75,15 @@ function Home(){
         setVendorList(data.results);
     });
 }
-// console.log(ReviewList);
+  function fetchPopularCategory(baseurl){
+    fetch(baseurl)
+    .then((response)=>response.json())
+    .then((data)=>{
+        console.log(data);
+        setCategoriesList(data.results);
+    });
+}
+console.log(CategoriesList);
   return(
         <main className='mt-4'>
           <div className="container">
@@ -89,58 +100,11 @@ function Home(){
             {/* Popular Categories  */}
             <h3 className='mb-4'>Popular Categories<Link to='/categories' className='float-end btn btn-dark '>View All Categories<i class="fa-solid fa-arrow-right-long"></i></Link></h3>
               <div className="row mb-4">
-            {/* Category Box */}
-              <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Category title</h4>
-              </div>
-              <div className='card-footer'>
-                Product Downloads : 234
-            </div>
-            </div>
-            </div>
-            {/* Category Box End */}
-            {/* Category Box */}
-            <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Category title</h4>
-              </div>
-              <div className='card-footer'>
-                Product Downloads : 234
-            </div>
-            </div>
-            </div>
-            {/* Category Box End */}
-            {/* Category Box */}
-            <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Category title</h4>
-              </div>
-              <div className='card-footer'>
-                Product Downloads : 234
-            </div>
-            </div>
-            </div>
-            {/* Category Box End */}
-            {/* Category Box */}
-            <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Category title</h4>
-              </div>
-              <div className='card-footer'>
-                Product Downloads : 234
-            </div>
-            </div>
-            </div>
-            {/* Category Box End */}
+              {
+                CategoriesList.map((category) => (
+                  <SingleCategory key={category.id} category={category} />
+                ))
+              }
             </div>
             {/* End Popular Categories  */}
               {/* Popular Product  */}

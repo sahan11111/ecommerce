@@ -6,7 +6,7 @@ function SingleRelatedProduct(props){
         <div className="col-2 offset-5  mb-4" >
             <div className="card shadow h-100 d-flex flex-column" >
                 <Link to={`/product/${props.product.title}/${props.product.id}`}>
-                    <img src={props.product.image} className="card-img-top" alt="..."/>
+                    <img src={props.product.image} className="card-img-top" style={{ height: "180px", objectFit: "cover" }}  alt={props.product.title}/>
                 </Link>
                 <div className="card-body">
                     <h4 className="card-title"><Link to={`/product/${props.product.title}/${props.product.id}`}>{props.product.title}</Link>

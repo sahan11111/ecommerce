@@ -113,6 +113,7 @@ class CustomerOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OrderItem
         fields = ['id','order','product','qty','price','usd_price']
+        
 
 #Vendor CustomerList and VendorOrderItem list
 class CustomerOrderSerializer(serializers.ModelSerializer):
@@ -177,13 +178,14 @@ class ProductRatingSerializer(serializers.ModelSerializer):
 
 #Category Serializer     
 class CategorySerializer(serializers.ModelSerializer):
+    total_downloads = serializers.IntegerField(read_only=True)
     class Meta:
         model = models.ProductCategory
-        fields = ['id','title', 'detail']
+        fields = ['id','title', 'detail','image','total_downloads']
         
     def __init__(self, *args,**kwargs ):
         super(CategorySerializer, self).__init__(*args, **kwargs)
-        self.Meta.depth =1
+
         
 class CategoryDetailSerializer(serializers.ModelSerializer):
     class Meta:

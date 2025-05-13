@@ -38,29 +38,36 @@ function Categories(){
 
     return(
        <section className="container mt-4">
-        {/*  Categories  */}
+{/*  Categories  */}
 <h3 className='mb-4'>All Categories</h3>
-  <div className="row mb-2">
- 
-{/* Category Box */}
-{
-                categories.map((category)=>
-            
-                <div className="col-12 col-md-3 mb-4" >
-                  <div className="card shadow" >
-                    <img src={logo} className="card-img-top" alt={category.title}/>
-                      <div className="card-body">
-                        <h4 className="card-title"><Link to={`/category/${category.title}/${category.id}`}><lable>{category.title}</lable></Link></h4>
-                    </div>
-                      <div className='card-footer'>
-                        Product Downloads : 234
-                      </div>
-                  </div>
-                </div>
-)
-}
-{/* Category Box End */}
-
+<div className="row mb-2">
+  {
+    categories.map((category) =>
+      <div className="col-12 col-md-3 mb-4" key={category.id}>
+        <div className="card shadow h-100 d-flex flex-column">
+          <Link to={`/category/${category.title}/${category.id}`}>
+            <img
+              src={category.image}
+              className="card-img-top"
+              alt={category.title}
+              style={{ height: "180px", objectFit: "cover" }} // Image consistency
+            />
+          </Link>
+          <div className="card-body d-flex flex-column">
+            <h4 className="card-title">
+              <Link to={`/category/${category.title}/${category.id}`}>
+                <label>{category.title}</label>
+              </Link>
+            </h4>
+            <label className="card-text">{category.detail}</label>
+          </div>
+          <div className='card-footer mt-auto'>
+            Product Downloads: {category.total_downloads}
+          </div>
+        </div>
+      </div>
+    )
+  }
 </div>
 {/* End  Categories  */}
 
