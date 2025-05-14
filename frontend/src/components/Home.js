@@ -39,12 +39,14 @@ function Home(){
   const [ReviewList, setReviewList] = useState([]);
   const [VendorList,setVendorList]=useState([]);
   const [CategoriesList,setCategoriesList]=useState([]);
+  const [PopularProductList,setPopularProductList]=useState([]);
 
   useEffect(() => {
     fetchData(baseUrl + '/products'); // Adjusted API URL if needed
     fetchTestimonialData(baseUrl+'/productrating/');
     fetchPopularVendors(baseUrl+'/vendors/?fetch_limit=4');
     fetchPopularCategory(baseUrl+'/categories/?fetch_limit=4')
+    fetchPopularProducts(baseUrl+'/popular-products/?fetch_limit=4')
   }, []);
 
   function fetchData(baseurl) {
@@ -83,7 +85,15 @@ function Home(){
         setCategoriesList(data.results);
     });
 }
-console.log(CategoriesList);
+  function fetchPopularProducts(baseurl){
+    fetch(baseurl)
+    .then((response)=>response.json())
+    .then((data)=>{
+        console.log(data);
+        setPopularProductList(data.results);
+    });
+}
+console.log(PopularProductList);
   return(
         <main className='mt-4'>
           <div className="container">
@@ -107,71 +117,13 @@ console.log(CategoriesList);
               }
             </div>
             {/* End Popular Categories  */}
-              {/* Popular Product  */}
-              <h3 className='mb-4'>Popular Products<a href='#' className='float-end btn btn-dark '>View All Products<i class="fa-solid fa-arrow-right-long"></i></a></h3>
-                <div className="row mb-4">
-                  {/* Product Box */}
-                <div className="col-12 col-md-3 mb-4" >
-              <div className="card shadow h-100 d-flex flex-column" >
-                <img src={logo} className="card-img-top" alt="..."/>
-                <div className="card-body">
-                  <h4 className="card-title">Product title</h4>
-                  <h5 className="card-title text-muted">Price :Rs 500</h5>
-                </div>
-                <div className='card-footer'>
-                <button title='Add to Cart' className='btn btn-success btn-sm'><i className="fa-solid fa-cart-plus "></i></button>
-                <button title='Add to Wistlist' className='btn btn-danger btn-sm ms-1'><i className="fa-solid fa-heart "></i></button>
+            {/* Popular Product  */}
+            <h3 className='mb-4'>Popular Products<a href='#' className='float-end btn btn-dark '>View All Products<i class="fa-solid fa-arrow-right-long"></i></a></h3>
+              <div className="row mb-4">
+                {
+                    PopularProductList.map((product)=><SingleProduct product={product} />)
+                }   
               </div>
-              </div>
-              </div>
-              {/* Product Box End */}
-              {/* Product Box */}
-              <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Product title</h4>
-                <h5 className="card-title text-muted">Price :Rs 500</h5>
-              </div>
-              <div className='card-footer'>
-              <button title='Add to Cart' className='btn btn-success btn-sm'><i className="fa-solid fa-cart-plus "></i></button>
-              <button title='Add to Wistlist' className='btn btn-danger btn-sm ms-1'><i className="fa-solid fa-heart "></i></button>
-            </div>
-            </div>
-            </div>
-            {/* Product Box End */}
-              {/* Product Box */}
-              <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Product title</h4>
-                <h5 className="card-title text-muted">Price :Rs 500</h5>
-              </div>
-              <div className='card-footer'>
-              <button title='Add to Cart' className='btn btn-success btn-sm'><i className="fa-solid fa-cart-plus "></i></button>
-              <button title='Add to Wistlist' className='btn btn-danger btn-sm ms-1'><i className="fa-solid fa-heart "></i></button>
-            </div>
-            </div>
-            </div>
-            {/* Product Box End */}
-              {/* Product Box */}
-              <div className="col-12 col-md-3 mb-4" >
-            <div className="card shadow h-100 d-flex flex-column" >
-              <img src={logo} className="card-img-top" alt="..."/>
-              <div className="card-body">
-                <h4 className="card-title">Product title</h4>
-                <h5 className="card-title text-muted">Price :Rs 500</h5>
-              </div>
-              <div className='card-footer'>
-              <button title='Add to Cart' className='btn btn-success btn-sm'><i className="fa-solid fa-cart-plus "></i></button>
-              <button title='Add to Wistlist' className='btn btn-danger btn-sm ms-1'><i className="fa-solid fa-heart "></i></button>
-            </div>
-            </div>
-            </div>
-            {/* Product Box End */}
-            
-            </div>
             {/* End Popular Product  */}
             {/* Popular Sellers  */}
             <h3 className='mb-4'>Popular Seller<Link to='/vendors' className='float-end btn btn-dark '>View All Sellers<i class="fa-solid fa-arrow-right-long"></i></Link></h3>

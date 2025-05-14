@@ -60,18 +60,24 @@ def vendor_login(request):
     user = authenticate(username=username, password=password)  # This only works if password is hashed correctly
     
     if user:
-        vendor = models.Vendor.objects.get(user=user)
-        msg = {
-            'bool': True,
-            'user': user.username,
-            'id': vendor.id
-        }
+        vendor = models.Vendor.objects.filter(user=user).first()
+        if vendor:
+            msg = {
+                'bool': True,
+                'user': user.username,
+                'id': vendor.id
+            }
+        else:
+            msg = {
+                'bool': False,
+                'msg': 'No Vendor profile associated with this user.'
+            }
     else:
         msg = {
             'bool': False,
             'msg': 'Invalid Username or Password'
         }
-    
+
     return JsonResponse(msg)
 
 
@@ -206,7 +212,25 @@ class ProductList(generics.ListCreateAPIView):
     #     category=models.ProductCategory.objects.get(id=category)
     #     qs=qs.filter(category=category)
     #     return qs
+class PopularProductList(generics.ListCreateAPIView):
+    queryset=models.Product.objects.all()
+    serializer_class=serializers.ProductListSerializer
+    def get_queryset(self):
+        qs = models.Product.objects.annotate(
+            total_downloads=Sum(
+                Cast('downloads', IntegerField())  # Use correct related_name here
+            )
+        )
 
+        if 'fetch_limit' in self.request.GET:
+            try:
+                limit = int(self.request.GET.get('fetch_limit'))
+                qs = qs.order_by('-total_downloads', '-id')[:limit]
+            except ValueError:
+                pass  # fallback to unfiltered queryset
+
+        return qs
+    
 class ProductImgsList(generics.ListCreateAPIView):
     queryset = models.ProductImage.objects.all()
     serializer_class = serializers.ProductImageSerializer
@@ -314,25 +338,31 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset=models.User.objects.all()
     serializer_class=serializers.UserSerializer
 
-@csrf_exempt   
+@csrf_exempt
 def customer_login(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
-    user = authenticate(username=username, password=password)  # This is correct!
-    
+    user = authenticate(username=username, password=password)
+
     if user:
-        customer = models.Customer.objects.get(user=user)
-        msg = {
-            'bool': True,
-            'user': user.username,
-            'id': customer.id
-        }
+        customer = models.Customer.objects.filter(user=user).first()
+        if customer:
+            msg = {
+                'bool': True,
+                'user': user.username,
+                'id': customer.id
+            }
+        else:
+            msg = {
+                'bool': False,
+                'msg': 'No customer profile associated with this user.'
+            }
     else:
         msg = {
             'bool': False,
             'msg': 'Invalid Username or Password'
         }
-    
+
     return JsonResponse(msg)
 
 

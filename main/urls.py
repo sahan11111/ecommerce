@@ -27,6 +27,7 @@ urlpatterns = [
     path('product-imgs/',views.ProductImgsList.as_view()),
     path('product-imgs/<int:product_id>',views.ProductImgsDetail.as_view()),
     path('product-img/<int:pk>',views.ProductImgDetail.as_view()),
+    path('popular-products/',views.PopularProductList.as_view()),
     
     #Products Categories
     path('categories/',views.CategoryList.as_view()),
