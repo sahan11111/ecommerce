@@ -3,9 +3,15 @@ from django.contrib.auth.models import User
 from .import models
 
 class VendorSerializer(serializers.ModelSerializer):
+    total_downloads = serializers.IntegerField(read_only=True)
+    category = serializers.SerializerMethodField()
     class Meta:
         model = models.Vendor
-        fields = ['id','user', 'address','mobile','profile_img']
+        fields = ['id','user', 'address','mobile','profile_img','total_downloads','category']
+        
+    def get_category(self, obj):
+        category = models.ProductCategory.objects.filter(catogary_product__vendor=obj)
+        return CategoryDetailSerializer(category, many=True).data
         
     def __init__(self, *args,**kwargs ):
         super(VendorSerializer, self).__init__(*args, **kwargs)
@@ -38,6 +44,10 @@ class ProductListSerializer(serializers.ModelSerializer):
     def __init__(self, *args,**kwargs ):
         super(ProductListSerializer, self).__init__(*args, **kwargs)
         # self.Meta.depth =1
+    # def to_representation(self, instance):
+    #     response=super().to_representation(instance)
+    #     response['vendor']=VendorSerializer(instance.vendor).data
+    #     return response
         
         
         

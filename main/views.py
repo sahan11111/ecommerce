@@ -22,7 +22,9 @@ class VendorList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         qs = models.Vendor.objects.all()
-
+        category_id = self.request.GET.get('category')
+        if category_id:
+            qs = qs.filter(product__category_id=category_id).distinct()
         if 'fetch_limit' in self.request.GET:
             try:
                 limit = int(self.request.GET.get('fetch_limit'))

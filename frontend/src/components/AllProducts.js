@@ -38,8 +38,8 @@ const baseUrl='http://127.0.0.1:8000/api';
     }
 
     var links=[];
-    var limit=12;
-    var totalLinks=totalResult/limit;
+    var limit=8;
+    var totalLinks=Math.ceil(totalResult / limit);
     for (let i=1; i<=totalLinks;i++){
         links.push(<li class='page-item'>                
         <Link

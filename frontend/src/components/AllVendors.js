@@ -6,7 +6,7 @@ function AllVendors() {
     const baseUrl = 'http://127.0.0.1:8000/api';
     const [VendorList, setVendorList] = useState([]);
     const [totalResult, setTotalResults] = useState(0);
-    const limit = 12;
+    const limit = 8;
 
     useEffect(() => {
         fetchData(`${baseUrl}/vendors/`);

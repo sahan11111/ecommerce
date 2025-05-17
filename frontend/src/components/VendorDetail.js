@@ -82,14 +82,16 @@ function VendorDetail(){
 
         {/* Slides */}
         <div className="carousel-inner">
-            {productList.map((product, index) => (
-            <div
-                className={`carousel-item ${index === 0 ? 'active' : ''}`}
-                key={index}
-            >
-                <SingleRelatedProduct product={product} />
+            <div className="col-2 offset-5  mb-4" >
+                {productList.map((product, index) => (
+                <div
+                    className={`carousel-item ${index === 0 ? 'active' : ''}`}
+                    key={index}
+                >
+                    <SingleRelatedProduct product={product} />
+                </div>
+                ))}
             </div>
-            ))}
         </div>
 
         {/* Controls */}

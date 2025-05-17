@@ -13,8 +13,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
     <Router>
-    <UserContext.Provider value={checkCustomer}> 
-        <App />
+      <UserContext.Provider value={checkCustomer}> 
+          <App />
       </UserContext.Provider>
     </Router>
   </>

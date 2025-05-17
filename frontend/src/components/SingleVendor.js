@@ -21,9 +21,41 @@ function SingleVendor(props) {
                         </Link>
                     </h4>
                 </div>
-                <div className='card-footer'>
-                  Categories : <a href='#'>Python</a>,<a href='#'>PHP</a>
-                </div> 
+                <div className="card-footer">
+                    <span style={{ fontWeight: "600", fontSize: "0.95rem" }}>
+                        Categories:
+                    </span>
+                    {props.vendor.category.map((cat, index) => (
+                        <Link
+                        key={index}
+                        to={`/category/${cat.title}/${cat.id}`}
+                        style={{
+                            display: "inline-block",
+                            marginLeft: "8px",
+                            marginTop: "4px",
+                            padding: "6px 14px",
+                            backgroundColor: "#ffffff",
+                            borderRadius: "20px",
+                            color: "#000",
+                            textDecoration: "none",
+                            fontSize: "0.85rem",
+                            border: "1px solid #ccc",
+                            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.08)",
+                            transition: "all 0.2s ease-in-out"
+                        }}
+                        onMouseOver={(e) => {
+                            e.target.style.backgroundColor = "#007bff";
+                            e.target.style.color = "#fff";
+                        }}
+                        onMouseOut={(e) => {
+                            e.target.style.backgroundColor = "#ffffff";
+                            e.target.style.color = "#000";
+                        }}
+                        >
+                        {cat.title}
+                        </Link>
+                    ))}
+                </div>
             </div>
         </div>
     );

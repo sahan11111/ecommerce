@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import logo from '../logo.svg';
 import SingleProduct from './SingleProduct';
 import { useState,useEffect } from 'react';
 import Testimonial from './Testimonial';
@@ -118,7 +117,7 @@ console.log(PopularProductList);
             </div>
             {/* End Popular Categories  */}
             {/* Popular Product  */}
-            <h3 className='mb-4'>Popular Products<a href='#' className='float-end btn btn-dark '>View All Products<i class="fa-solid fa-arrow-right-long"></i></a></h3>
+            <h3 className='mb-4'>Popular Products<Link to='/products' className='float-end btn btn-dark '>View All Products<i class="fa-solid fa-arrow-right-long"></i></Link></h3>
               <div className="row mb-4">
                 {
                     PopularProductList.map((product)=><SingleProduct product={product} />)
