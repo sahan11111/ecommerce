@@ -595,18 +595,35 @@ class WishList(generics.ListCreateAPIView):
     
     
     
+# @csrf_exempt
+# def check_in_wishlist(request):
+#     if request.method == 'POST':
+#         product_id = request.POST.get('product')
+#         customer_id = request.POST.get('customer')
+        
+#         checkWishlist = models.Wishlist.objects.filter(product_id=product_id, customer_id=customer_id).count()
+        
+#         msg = {'bool': False}
+#         if checkWishlist > 0:
+#             msg['bool'] = True
+        
+#         return JsonResponse(msg)
 @csrf_exempt
 def check_in_wishlist(request):
     if request.method == 'POST':
         product_id = request.POST.get('product')
         customer_id = request.POST.get('customer')
-        
-        checkWishlist = models.Wishlist.objects.filter(product_id=product_id, customer_id=customer_id).count()
-        
-        msg = {'bool': False}
-        if checkWishlist > 0:
-            msg['bool'] = True
-        
+
+        # Validate product_id and customer_id
+        if not product_id or not customer_id or not product_id.isdigit() or not customer_id.isdigit():
+            return JsonResponse({'error': 'Invalid product or customer ID'}, status=400)
+
+        checkWishlist = models.Wishlist.objects.filter(
+            product_id=int(product_id),
+            customer_id=int(customer_id)
+        ).count()
+
+        msg = {'bool': checkWishlist > 0}
         return JsonResponse(msg)  
     
 # Customer WishItems

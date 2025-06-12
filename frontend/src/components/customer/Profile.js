@@ -49,7 +49,7 @@ function Profile(){
     };
     const submitHandler = (event) => {
         // event.preventDefault(); // Prevent form reload
-        window.location.reload();
+       
         
         const formData = new FormData();
         formData.append('user', ProfileData.user_id);
@@ -63,7 +63,8 @@ function Profile(){
                 'content-type':'multipart/form-data'
             }
         }).then(function(response) {
-            console.log(response);   
+            console.log(response);
+            window.location.reload();   
         })
         .catch(function(error) {
             console.error('Login Error:', error);
