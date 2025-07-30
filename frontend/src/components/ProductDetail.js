@@ -7,6 +7,8 @@ import { UserContext,CartContext, CurrencyContext } from '../Context';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
+import { useNavigate } from 'react-router-dom';
+
 
 function ProductDetail(){
     const baseUrl='http://127.0.0.1:8000/api';
@@ -165,6 +167,37 @@ function checkProductInWishlist(baseUrl,product_id){
         });
    
 }
+const navigate = useNavigate();
+
+const buyNowHandler = () => {
+  const previousCart = localStorage.getItem('cartData');
+  const cartJson = JSON.parse(previousCart) || [];
+
+  const existsInCart = cartJson.some(item => item?.product?.id === productData.id);
+
+  if (!existsInCart) {
+    const cartDataItem = {
+      product: {
+        id: productData.id,
+        title: productData.title,
+        price: productData.price,
+        usd_price: productData.usd_price,
+        image: productData.image,
+      },
+      user: { id: 1 },
+      total_amount: 10,
+      usd_total_amount: 10,
+    };
+
+    cartJson.push(cartDataItem);
+    localStorage.setItem('cartData', JSON.stringify(cartJson));
+    setCartData(cartJson);
+    setcartButtonClickStatus(true);
+  }
+
+  navigate('/checkout');  // ✅ Go to checkout
+//   navigate('/confirm-order');
+};
     return(
            <section className="container mt-4">
                 <div className="row">
@@ -252,7 +285,9 @@ function checkProductInWishlist(baseUrl,product_id){
                                     <i className="fa-solid fa-cart-plus "></i>Remove from Cart
                                 </button>
                             }
-                            <button title='buy Now' className='btn btn-success ms-1'><i className="fa-solid fa-bag-shopping "></i>Buy Now</button>
+                            <button onClick={buyNowHandler} className='btn btn-success ms-1'>
+                                <i className="fa-solid fa-bag-shopping "></i>Buy Now
+                            </button>
                             {
                                 (userContext && !productInWishlist) && <button onClick={saveInWishList} title='Add to Wistlist' className='btn btn-danger  ms-1'><i className="fa fa-heart "></i>Wishlist</button>
                             }

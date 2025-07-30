@@ -59,6 +59,7 @@ function App() {
   const [cartData, setCartData] = useState(JSON.parse(checkCart) );
   const [CurrencyData, setCurrencyData] = useState(currentCurrency);
 
+
   return (
     <>
       <CurrencyContext.Provider value={{CurrencyData,setCurrencyData}}>
