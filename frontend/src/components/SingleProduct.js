@@ -163,6 +163,8 @@ function checkProductInWishlist(baseUrl,product_id){
                     {
                         userContext ===null && <button title='Add to Wistlist' className='btn btn-danger  btn-sm ms-1 disabled'><i className="fa fa-heart "></i></button>
                     }
+                    
+                    <h7 className='text-muted'>Downloads : {props.product.downloads}</h7>
         </div>
             </div>
         </div>

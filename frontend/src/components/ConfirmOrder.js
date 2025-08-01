@@ -15,6 +15,7 @@ function ConfirmOrder() {
     const [orderAmount, setorderAmount] = useState(0);
     const [PayMethod, setPayMethod] = useState('');
     const [showPayPal, setShowPayPal] = useState(false); // 🛠️ NEW: Control PayPal showing
+    const [showKhalti, setShowKhalti] = useState(false); // 🛠️ NEW: Control Khalti showing
     const { setCartData } = useContext(CartContext);
     const userContext = useContext(UserContext);
     const {CurrencyData}=useContext(CurrencyContext);
@@ -38,7 +39,7 @@ function ConfirmOrder() {
         var cartJson = JSON.parse(previousCart);
         cartJson.map((cart, index) => {
           total_amount+=parseFloat(cart.product.price);
-          usd_total_amount+=parseFloat(cart.product.usd_price)
+          usd_total_amount+=parseFloat(cart.product.usd_price);
         });
 
         const formData = new FormData();
@@ -123,7 +124,7 @@ function ConfirmOrder() {
             if (PayMethod === 'paypal') {
                 setShowPayPal(true); 
             } else if (PayMethod === 'khalti') {
-                setShowPayPal(true);
+                setShowKhalti(true);
             } else if (PayMethod === 'esewa') {
                 setShowPayPal(true);
             }
@@ -199,7 +200,8 @@ function ConfirmOrder() {
                                 />
                             </PayPalScriptProvider>
                         }
-                        {showPayPal && PayMethod === 'khalti' && <KhaltiPayment />}
+                        {showKhalti && PayMethod === 'khalti' && <KhaltiPayment />}
+                        
                     </div>
                 </div>
             </div>

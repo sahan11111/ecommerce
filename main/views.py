@@ -12,8 +12,8 @@ from django.db.models import Count
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 import json
-from django.db.models import Sum,IntegerField
-from django.db.models.functions import Cast
+from django.db.models import Avg,Sum,IntegerField,Value, FloatField, ExpressionWrapper
+from django.db.models.functions import Cast, Coalesce
 # Create your views here.
 class VendorList(generics.ListCreateAPIView):
     queryset=models.Vendor.objects.all()
@@ -214,22 +214,48 @@ class ProductList(generics.ListCreateAPIView):
     #     category=models.ProductCategory.objects.get(id=category)
     #     qs=qs.filter(category=category)
     #     return qs
+# class PopularProductList(generics.ListCreateAPIView):
+#     queryset=models.Product.objects.all()
+#     serializer_class=serializers.ProductListSerializer
+#     def get_queryset(self):
+#         qs = models.Product.objects.annotate(
+#             total_downloads=Sum(
+#                 Cast('downloads', IntegerField())  # Use correct related_name here
+#             )
+#         )
+
+#         if 'fetch_limit' in self.request.GET:
+#             try:
+#                 limit = int(self.request.GET.get('fetch_limit'))
+#                 qs = qs.order_by('-total_downloads', '-id')[:limit]
+#             except ValueError:
+#                 pass  # fallback to unfiltered queryset
+
+#         return qs
 class PopularProductList(generics.ListCreateAPIView):
-    queryset=models.Product.objects.all()
-    serializer_class=serializers.ProductListSerializer
+    serializer_class = serializers.ProductListSerializer
+
     def get_queryset(self):
-        qs = models.Product.objects.annotate(
-            total_downloads=Sum(
-                Cast('downloads', IntegerField())  # Use correct related_name here
-            )
+        downloads_int = Cast('downloads', IntegerField())
+        avg_rating = Coalesce(Avg('product_rating__rating'), Value(0.0), output_field=FloatField())
+
+        # Cast downloads to FloatField before multiplying
+        downloads_float = Cast(downloads_int, FloatField())
+
+        popularity_score = ExpressionWrapper(
+            downloads_float * Value(0.7) + avg_rating * Value(0.3),
+            output_field=FloatField()
         )
 
-        if 'fetch_limit' in self.request.GET:
-            try:
-                limit = int(self.request.GET.get('fetch_limit'))
-                qs = qs.order_by('-total_downloads', '-id')[:limit]
-            except ValueError:
-                pass  # fallback to unfiltered queryset
+        qs = models.Product.objects.annotate(
+            avg_rating=avg_rating,
+            total_downloads=downloads_int,
+            popularity_score=popularity_score
+        ).order_by('-popularity_score', '-id')
+
+        fetch_limit = self.request.GET.get('fetch_limit')
+        if fetch_limit and fetch_limit.isdigit():
+            qs = qs[:int(fetch_limit)]
 
         return qs
     
