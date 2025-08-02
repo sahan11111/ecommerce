@@ -27,7 +27,7 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(models.Product, ProductAdmin)
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display=['id','customer','order_time','total_amount','usd_total_amount','order_status']
+    list_display=['id','customer','order_time','total_amount','usd_total_amount','order_status','payment_mode','trans_ref']
 admin.site.register(models.Order, OrderAdmin)
 
 class OrderItemAdmin(admin.ModelAdmin):

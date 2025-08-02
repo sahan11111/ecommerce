@@ -26,7 +26,7 @@ function Header(){
         <span className="navbar-toggler-icon"></span>
       </button>
       <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <Link className="navbar-brand" to="/">Python Market Place</Link>
+        <Link className="navbar-brand" to="/">Programming Market Place</Link>
         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
           <li className="nav-item">
             <Link className="nav-link " aria-current="page" to="/">Home</Link>
@@ -82,7 +82,7 @@ function Header(){
           }
           { checkVendor === 'true'&&(userContext !== 'true' ||checkVendor === 'false' )  &&
           <li className="nav-item">
-            <Link className="nav-link" aria-current="page" to="/vendor/orders">New Order (4)</Link>
+            <Link className="nav-link" aria-current="page" to="/vendor/orders">New Orders</Link>
           </li>
           }
           <li className="nav-item">

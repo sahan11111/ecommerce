@@ -461,19 +461,28 @@ def customer_change_password(request, customer_id):
 class OrderList(generics.ListCreateAPIView):
     queryset=models.Order.objects.all()
     serializer_class=serializers.OrderSerializer
-    
-@csrf_exempt     
-def update_order_status(request,order_id):
-    if request.method=='POST':
-        updateRes=models.Order.objects.filter(id=order_id).update(order_status=True)
-        msg={
-            'bool':False,            
-            }
-        if updateRes:
-            msg={
-                'bool':True,            
-                }    
-    return JsonResponse(msg)
+        
+@csrf_exempt  # Use only if you don't send CSRF token from frontend
+def update_order_status(request, order_id):
+    if request.method == 'POST':
+        payment_mode = request.POST.get('payment_mode')
+        trans_ref = request.POST.get('trans_ref')
+
+        if payment_mode and trans_ref:
+            updated = models.Order.objects.filter(id=order_id).update(
+                order_status=True,
+                payment_mode=payment_mode,
+                trans_ref=trans_ref
+            )
+        else:
+            updated = models.Order.objects.filter(id=order_id).update(order_status=True)
+
+        if updated:
+            return JsonResponse({'bool': True})
+        else:
+            return JsonResponse({'bool': False})
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
     
 
 class OrderItemList(generics.ListCreateAPIView):

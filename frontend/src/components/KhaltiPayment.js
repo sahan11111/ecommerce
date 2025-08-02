@@ -4,7 +4,7 @@ import KhaltiCheckout from "khalti-checkout-web";
 const KhaltiPayment = () => {
   useEffect(() => {
     let config = {
-      publicKey: "test_public_key_abcdef1234567890abcdef1234567890",  // Replace with your test/live key
+      publicKey: "live_public_key_546eb6da05544d7d88961db04fdb9721",  // Replace with your test/live key
       productIdentity: "1234567890",
       productName: "Ecommerce Website",
       productUrl: "http://localhost:3000",
@@ -23,10 +23,7 @@ const KhaltiPayment = () => {
       },
       paymentPreference: [
         "KHALTI",
-        "EBANKING",
-        "MOBILE_BANKING",
-        "CONNECT_IPS",
-        "SCT",
+
       ],
     };
 

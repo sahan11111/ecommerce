@@ -67,23 +67,27 @@ function ConfirmOrder() {
             });
     }
 
-    function updateOrderStatus(order_status){
-            // Submit order data to the backend
-            axios.post(baseUrl + '/update-order-status/'+orderId)
-            .then(function (response) {
-                console.log(response);
-                window.location.href = '/order/success';
-                // var orderId = response.data.id;
-                // setorderId(orderId);
-                // console.log('Order confirmed:', response.data);
-                // orderItems(orderId);
-                // setconfirmOrder(true);
-            })
-            .catch(function (error) {
-                window.location.href = '/order/failure';
-                console.log('Error during order confirmation:', error);
-            });
-    }
+function updateOrderStatus(orderId, order_status, transData = {}) {
+  const trans_data = new FormData();
+
+  if (transData.trans_ref) {
+    trans_data.append('trans_ref', transData.trans_ref);
+  }
+  if (transData.payment_mode) {
+    trans_data.append('payment_mode', transData.payment_mode);
+  }
+  trans_data.append('order_status', order_status);
+
+  axios.post(baseUrl + '/update-order-status/' + orderId, trans_data)
+    .then(function (response) {
+      console.log(response);
+      window.location.href = '/order/success';
+    })
+    .catch(function (error) {
+      console.error('Error during order confirmation:', error);
+      window.location.href = '/order/failure';
+    });
+}
 
     function orderItems(order_id) {
         const previousCart = localStorage.getItem('cartData');
@@ -177,28 +181,40 @@ function ConfirmOrder() {
                         {/* EDZbA-dYmxjUwkc6Gl4Z8R-xhCb3TKsBfLq50pftZcGq71tMVxO0cSvvdH1QCiftWPh_hC9x30ev0wcA */}
                         {showPayPal && PayMethod === 'paypal' &&
                             <PayPalScriptProvider options={{ "client-id": 'AUllBqvBXdR81CXoFBo09eOg_eNkdXhZvyR7WSV6OrvB9iP-p05RTdVPBlDqqjoYxmhdg6eCcdKSieWo' }}>
-                                <PayPalButtons className='mt-3'
+                                <PayPalButtons
+                                    className="mt-3"
                                     createOrder={(data, actions) => {
-                                        return actions.order.create({
-                                            purchase_units: [
-                                                {
-                                                    amount: {
-                                                        currency_code: 'USD',
-                                                        value: orderAmount.toString(), 
-                                                    },
-                                                },
-                                            ],
-                                        });
+                                    return actions.order.create({
+                                        purchase_units: [
+                                        {
+                                            amount: {
+                                            currency_code: 'USD',
+                                            value: orderAmount.toString(),
+                                            },
+                                        },
+                                        ],
+                                    });
                                     }}
                                     onApprove={(data, actions) => {
-                                        return actions.order.capture().then((details) => {
-                                            const name = details.payer.name.given_name;
-                                            // alert(`Transaction completed by ${name}`);
-                                            updateOrderStatus(true);
+                                    return actions.order.capture().then((details) => {
+                                        const name = details.payer.name.given_name;
+                                        // Call your order update function with payment details
+                                        updateOrderStatus(orderId, true, {
+                                        trans_ref: details.id,
+                                        payment_mode: 'paypal',
                                         });
+                                    });
+                                    }}
+                                    onError={(err) => {
+                                    console.error('PayPal error:', err);
+                                    alert('Payment failed. Please try again.');
+                                    }}
+                                    onCancel={() => {
+                                    alert('Payment cancelled.');
                                     }}
                                 />
-                            </PayPalScriptProvider>
+                                </PayPalScriptProvider>
+
                         }
                         {showKhalti && PayMethod === 'khalti' && <KhaltiPayment />}
                         

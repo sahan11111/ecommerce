@@ -130,7 +130,7 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
     class Meta:
         model = models.Order
-        fields = ['id', 'customer','order_status','total_amount','usd_total_amount']        
+        fields = ['id', 'customer','order_status','total_amount','usd_total_amount','payment_mode','trans_ref']        
 class VendorOrderItemSerializer(serializers.ModelSerializer):
     order=CustomerOrderSerializer()
     product=ProductDetailSerializer()

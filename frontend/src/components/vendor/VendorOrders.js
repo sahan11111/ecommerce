@@ -58,6 +58,7 @@ function VendorOrders(){
                                     <th>Product</th>
                                     <th>Price</th>
                                     <th>Status</th>
+                                    <th>Pay Method</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -86,6 +87,7 @@ function VendorOrders(){
                                                     
                                                 </span>
                                             </td>
+                                            <td>{item.order.payment_mode}</td>
                                             <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
