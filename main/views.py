@@ -18,28 +18,30 @@ from django.db.models.functions import Cast, Coalesce
 class VendorList(generics.ListCreateAPIView):
     queryset=models.Vendor.objects.all()
     serializer_class=serializers.VendorSerializer
-    
+
 
     def get_queryset(self):
         qs = models.Vendor.objects.all()
         category_id = self.request.GET.get('category')
+
         if category_id:
             qs = qs.filter(product__category_id=category_id).distinct()
-        if 'fetch_limit' in self.request.GET:
-            try:
-                limit = int(self.request.GET.get('fetch_limit'))
 
-                # Sum the downloads across all products per vendor
+        fetch_limit = self.request.GET.get('fetch_limit')
+        if fetch_limit:
+            try:
+                limit = int(fetch_limit)
                 qs = qs.annotate(
-                    total_downloads=Sum(
-                        Cast('product__downloads', IntegerField())
+                    total_downloads=Coalesce(
+                        Sum(Cast('product__downloads', IntegerField())),
+                        0
                     )
                 ).order_by('-total_downloads', '-id')[:limit]
-
             except ValueError:
-                pass  # fallback to unfiltered queryset
+                pass  # handle invalid input if needed
 
         return qs
+
     # permission_classes=[
     #     permissions.IsAuthenticated
     # ]
@@ -243,7 +245,7 @@ class PopularProductList(generics.ListCreateAPIView):
         downloads_float = Cast(downloads_int, FloatField())
 
         popularity_score = ExpressionWrapper(
-            downloads_float * Value(0.7) + avg_rating * Value(0.3),
+            downloads_float * Value(0.3) + avg_rating * Value(0.7),
             output_field=FloatField()
         )
 
@@ -258,6 +260,7 @@ class PopularProductList(generics.ListCreateAPIView):
             qs = qs[:int(fetch_limit)]
 
         return qs
+    
     
 class ProductImgsList(generics.ListCreateAPIView):
     queryset = models.ProductImage.objects.all()
@@ -604,8 +607,9 @@ class CategoryList(generics.ListCreateAPIView):
     def get_queryset(self):
         qs = models.ProductCategory.objects.annotate(
             total_downloads=Sum(
-                Cast('catogary_product__downloads', IntegerField())  # Use correct related_name here
-            )
+                Cast('catogary_product__downloads', IntegerField())  
+            ),
+            total_products=Count('catogary_product')
         )
 
         if 'fetch_limit' in self.request.GET:

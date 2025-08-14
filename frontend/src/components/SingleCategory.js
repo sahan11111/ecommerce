@@ -12,7 +12,7 @@ function SingleCategory({ category }) {
                     <h4 className="card-title"><Link to={`/category/${category.title}/${category.id}`}>{category.title}</Link></h4>
                 </div>
                 <div className="card-footer">
-                    Product Downloads: {category.total_downloads}
+                    Total Products: {category.total_products}
                 </div>
             </div>
         </div>

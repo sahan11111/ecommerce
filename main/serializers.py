@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .import models
+from django.db.models import Avg
 
 class VendorSerializer(serializers.ModelSerializer):
     total_downloads = serializers.IntegerField(read_only=True)
@@ -34,12 +35,18 @@ class VendorDailyReport(serializers.ModelSerializer):
 class ProductListSerializer(serializers.ModelSerializer):
     tag_list = serializers.SerializerMethodField()
     product_rating=serializers.StringRelatedField(many=True,read_only=True)
+    avg_rating = serializers.SerializerMethodField()
+    
     class Meta:
         model = models.Product
-        fields = ['id','category','vendor','title','slug','tag_list','detail','price','usd_price','product_rating','image','product_file','tags','published_status','downloads']
+        fields = ['id','category','vendor','title','slug','tag_list','detail','price','usd_price','product_rating','image','product_file','tags','published_status','downloads','avg_rating']
         
     def tag_list(self, obj):
         return obj.tags.split(',') if obj.tags else []
+    
+    def get_avg_rating(self, obj):
+        avg = obj.product_rating.aggregate(avg=Avg('rating'))['avg']
+        return round(avg or 0, 2)
         
     def __init__(self, *args,**kwargs ):
         super(ProductListSerializer, self).__init__(*args, **kwargs)
@@ -60,12 +67,17 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     product_imgs = ProductImageSerializer(many=True, read_only=True)
     tag_list = serializers.SerializerMethodField()
     product_rating = serializers.StringRelatedField(many=True, read_only=True)
+    avg_rating = serializers.SerializerMethodField()
     class Meta:
         model = models.Product
-        fields = ['id', 'category', 'vendor', 'title', 'slug','tag_list', 'detail', 'price', 'usd_price','product_rating', 'product_imgs','demo_url','image','product_file','downloads','published_status','tags']  
+        fields = ['id', 'category', 'vendor', 'title', 'slug','tag_list', 'detail', 'price', 'usd_price','product_rating', 'product_imgs','demo_url','image','product_file','downloads','published_status','tags','avg_rating']  
     
     def tag_list(self, obj):
         return obj.tags.split(',') if obj.tags else []
+    
+    def get_avg_rating(self, obj):
+        avg = obj.product_rating.aggregate(avg=Avg('rating'))['avg']
+        return round(avg or 0, 2)
        
     def __init__(self, *args, **kwargs):
         super(ProductDetailSerializer, self).__init__(*args, **kwargs)
@@ -189,9 +201,10 @@ class ProductRatingSerializer(serializers.ModelSerializer):
 #Category Serializer     
 class CategorySerializer(serializers.ModelSerializer):
     total_downloads = serializers.IntegerField(read_only=True)
+    total_products = serializers.IntegerField(read_only=True)
     class Meta:
         model = models.ProductCategory
-        fields = ['id','title', 'detail','image','total_downloads']
+        fields = ['id','title', 'detail','image','total_downloads','total_products']
         
     def __init__(self, *args,**kwargs ):
         super(CategorySerializer, self).__init__(*args, **kwargs)

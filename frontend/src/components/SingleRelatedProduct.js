@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useContext,useEffect,useState } from 'react';
 import { UserContext,CurrencyContext,CartContext } from '../Context';
 import axios from 'axios';
+
 function SingleRelatedProduct(props){
     const {CurrencyData}=useContext(CurrencyContext);
     const baseUrl='http://127.0.0.1:8000/api';
@@ -127,6 +128,19 @@ function checkProductInWishlist(baseUrl,product_id){
         });
    
 }
+const index = props.index;
+
+let _class = '';
+if (index === 0) {
+    _class = 'active';
+}
+
+// 🔹 CHANGED: Use product avg_rating directly instead of props.item
+const avg_rating = props.product?.avg_rating || 0; // 🔹 CHANGED
+var _stars = [];
+for (let i = 0; i < avg_rating; i++) { // 🔹 CHANGED
+    _stars.push(<i key={i} className="fa fa-star text-warning"></i>); // 🔹 CHANGED
+}
     return(
             <div className="card shadow h-100 d-flex flex-column" >
                 <Link to={`/product/${props.product.title}/${props.product.id}`}>
@@ -135,6 +149,7 @@ function checkProductInWishlist(baseUrl,product_id){
                 
                 <div className="card-body">
                     <h4 className="card-title"><Link to={`/product/${props.product.title}/${props.product.id}`}>{props.product.title}</Link></h4>
+                    <div>{_stars}</div>
                     {
                         CurrencyData !=='usd' && <h5 className="card-title text-muted">Price :Rs {props.product.price}</h5>
                     }

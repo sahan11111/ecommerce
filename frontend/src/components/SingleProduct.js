@@ -124,6 +124,20 @@ function SingleProduct(props) {
             });
     }
 
+const index = props.index;
+
+let _class = '';
+if (index === 0) {
+    _class = 'active';
+}
+
+// 🔹 CHANGED: Use product avg_rating directly instead of props.item
+const avg_rating = props.product?.avg_rating || 0; // 🔹 CHANGED
+var _stars = [];
+for (let i = 0; i < avg_rating; i++) { // 🔹 CHANGED
+    _stars.push(<i key={i} className="fa fa-star text-warning"></i>); // 🔹 CHANGED
+}
+
     // ✅ ADDED: Don't render component if not published
     if (!props.product.published_status) {
         return null;
@@ -141,6 +155,8 @@ function SingleProduct(props) {
                             <label>{props.product.title}</label>
                         </Link>
                     </h4>
+      {/* 🔹 CHANGED: Render stars using props.product.avg_rating */}
+                    <div>{_stars}</div> {/* 🔹 CHANGED */}
                     {CurrencyData !== 'usd' && <h5 className="card-title text-muted">Price :Rs {props.product.price}</h5>}
                     {CurrencyData === 'usd' && <h5 className="card-title text-muted">Price :$ {props.product.usd_price}</h5>}
                 </div>

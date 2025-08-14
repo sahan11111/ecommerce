@@ -198,6 +198,17 @@ const buyNowHandler = () => {
   navigate('/checkout');  // ✅ Go to checkout
 //   navigate('/confirm-order');
 };
+
+// ⭐ CHANGED: Use avg_rating from productData instead of props
+const avg_rating = productData?.avg_rating || 0;
+
+// ⭐ CHANGED: Create star icons based on avg_rating
+let _stars = [];
+for (let i = 0; i < Math.floor(avg_rating); i++) {
+    _stars.push(<i key={i} className="fa fa-star text-warning"></i>);
+}
+
+
     return(
            <section className="container mt-4">
                 <div className="row">
@@ -262,6 +273,19 @@ const buyNowHandler = () => {
                                 <span className="visually-hidden">Next</span>
                             </button>
                         </div>
+                              
+                    <div className="mt-2">
+                    <Link
+                        to={`/product-rating/${productData.id}`}
+                        className="text-decoration-none"
+                    >
+                        <div className="d-inline-flex align-items-center bg-light px-3 py-1 rounded-pill shadow-sm rating-link">
+                            <strong className="me-2 text-dark">Rating:</strong>
+                            <span className="me-2 text-warning">{_stars}</span>
+                            <i className="fa fa-chevron-right text-secondary small"></i>
+                        </div>
+                    </Link>
+                </div>
 
                     </div>
                         <div className="col-8">

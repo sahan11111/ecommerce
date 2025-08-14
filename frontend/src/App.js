@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'font-awesome/css/font-awesome.min.css';
 // Website
 import Header from './components/Header';
 import Home from './components/Home';
@@ -52,6 +53,7 @@ import VendorChangePassword from './components/vendor/VendorChangePassword';
 
 import { CartContext, CurrencyContext } from './Context';
 import { useState } from 'react';
+import ProductRating from './components/ProductRating';
 
 const checkCart = localStorage.getItem('cartData');
 const currentCurrency = localStorage.getItem('currency');
@@ -73,6 +75,7 @@ function App() {
           <Route path="/category/:category_slug/:category_id" element={<CategoryProducts />} />
           <Route path="/products/:tag" element={<TagProducts />} />
           <Route path="/product/:product_slug/:product_id" element={<ProductDetail />} />
+          <Route path="/product-rating/:product_id" element={<ProductRating />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/confirm-order" element={<ConfirmOrder />} />
           <Route path="/order/success" element={<OrderSuccess />} />
