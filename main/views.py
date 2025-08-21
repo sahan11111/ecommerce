@@ -12,7 +12,7 @@ from django.db.models import Count
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 import json
-from django.db.models import Avg,Sum,IntegerField,Value, FloatField, ExpressionWrapper
+from django.db.models import Avg,Sum,IntegerField,Value, FloatField, ExpressionWrapper,OuterRef,Subquery
 from django.db.models.functions import Cast, Coalesce
 # Create your views here.
 class VendorList(generics.ListCreateAPIView):
@@ -290,15 +290,40 @@ class ProductImgDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=serializers.ProductImageSerializer   
 
     
+
+
 class TagProductList(generics.ListCreateAPIView):
-    queryset=models.Product.objects.all().order_by('id') 
-    serializer_class=serializers.ProductListSerializer
-    pagination_class=pagination.PageNumberPagination
+    serializer_class = serializers.ProductListSerializer
+    pagination_class = pagination.PageNumberPagination
+
     def get_queryset(self):
-        qs = super().get_queryset()
-        tag=self.kwargs['tag']
-        qs = qs.filter(tags__icontains=tag)  # Filter by tag name
-        return qs   
+        tag = self.kwargs['tag']
+
+        downloads_int = Cast('downloads', IntegerField())
+        downloads_float = Cast(downloads_int, FloatField())
+
+        # Subquery for avg_rating per product
+        avg_rating_subquery = models.ProductRating.objects.filter(
+            product=OuterRef('pk')
+        ).values('product').annotate(
+            avg_rating=Avg('rating')
+        ).values('avg_rating')[:1]
+
+        popularity_score = ExpressionWrapper(
+            downloads_float * Value(0.3) +
+            Coalesce(Subquery(avg_rating_subquery), Value(0.0)) * Value(0.7),
+            output_field=FloatField()
+        )
+
+        queryset = models.Product.objects.filter(
+            tags__icontains=tag
+        ).annotate(
+            avg_rating=Coalesce(Subquery(avg_rating_subquery), Value(0.0)),
+            total_downloads=downloads_int,
+            popularity_score=popularity_score
+        ).order_by('-popularity_score', '-id')
+
+        return queryset
 
 
 class RelatedProductList(generics.ListCreateAPIView):

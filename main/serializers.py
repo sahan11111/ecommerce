@@ -11,7 +11,7 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = ['id','user', 'address','mobile','profile_img','total_downloads','category']
         
     def get_category(self, obj):
-        category = models.ProductCategory.objects.filter(catogary_product__vendor=obj)
+        category = models.ProductCategory.objects.filter(catogary_product__vendor=obj).distinct()  # ✅ removes duplicates
         return CategoryDetailSerializer(category, many=True).data
         
     def __init__(self, *args,**kwargs ):

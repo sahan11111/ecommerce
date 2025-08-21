@@ -36,3 +36,25 @@
     transform: rotate(360deg);
   }
 }
+.img-wrapper {
+  width: 100%;
+  height: 200px; /* fixed height ensures all carousel items stay same size */
+  overflow: hidden;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f8f8; /* optional: prevent black background if image doesn’t fill */
+}
+
+.hover-zoom {
+  transition: transform 0.3s ease-in-out;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* or 'cover' if you prefer to crop and fill */
+}
+
+.hover-zoom:hover {
+  transform: scale(1.05);
+}
+

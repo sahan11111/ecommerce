@@ -209,7 +209,7 @@ for (let i = 0; i < Math.floor(avg_rating); i++) {
 }
 
 
-    return(
+        return(
            <section className="container mt-4">
                 <div className="row">
                     <div className="col-4">
@@ -244,25 +244,31 @@ for (let i = 0; i < Math.floor(avg_rating); i++) {
                                 }
                             </div>
 
-                            <div className="carousel-inner">
+                           <div className="carousel-inner">
                                 {
                                 productImgs.map((img, index) => {
                                     if (index === 0) {
                                     return (
                                         <div className="carousel-item active" key={index}>
-                                        <img src={img.image} className="img-thumbnail mb-5 " alt={`Slide ${index + 1}`} />
+                                            {/* ⭐ CHANGED: wrapped in img-wrapper to keep size fixed */}
+                                            <div className="img-wrapper mb-5 rounded shadow-sm">
+                                                <img src={img.image} className="img-fluid hover-zoom" alt={`Slide ${index + 1}`} />
+                                            </div>
                                         </div>
                                     );
                                     } else {
                                     return (
                                         <div className="carousel-item" key={index}>
-                                        <img src={img.image} className="img-thumbnail mb-5 " alt={`Slide ${index + 1}`} />
+                                            {/* ⭐ CHANGED: wrapped in img-wrapper to keep size fixed */}
+                                            <div className="img-wrapper mb-5 rounded shadow-sm">
+                                                <img src={img.image} className="img-fluid hover-zoom" alt={`Slide ${index + 1}`} />
+                                            </div>
                                         </div>
                                     );
                                     }
                                 })
                                 }
-                        </div>
+                            </div>
 
                             <button className="carousel-control-prev" type="button" data-bs-target="#productThumbnailSlider" data-bs-slide="prev">
                                 <span className="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -279,7 +285,8 @@ for (let i = 0; i < Math.floor(avg_rating); i++) {
                         to={`/product-rating/${productData.id}`}
                         className="text-decoration-none"
                     >
-                        <div className="d-inline-flex align-items-center bg-light px-3 py-1 rounded-pill shadow-sm rating-link">
+                        {/* ⭐ CHANGED: styled rating pill */}
+                        <div className="d-inline-flex align-items-center bg-light px-3 py-2 rounded-pill shadow-sm rating-link">
                             <strong className="me-2 text-dark">Rating:</strong>
                             <span className="me-2 text-warning">{_stars}</span>
                             <i className="fa fa-chevron-right text-secondary small"></i>
@@ -289,45 +296,54 @@ for (let i = 0; i < Math.floor(avg_rating); i++) {
 
                     </div>
                         <div className="col-8">
-                            <h3>{productData.title}</h3>
-                            <p>{productData.detail}</p>
+                            {/* ⭐ CHANGED: bold title + muted description */}
+                            <h2 className="fw-bold text-dark">{productData.title}</h2>
+                            <p className="text-muted">{productData.detail}</p>
+
+                            {/* ⭐ CHANGED: highlighted price */}
                             {
-                                CurrencyData !=='usd' && <h5 className="card-title text-muted">Price :Rs {productData.price}</h5>
+                                CurrencyData !=='usd' && <h4 className="text-success fw-bold">Price : Rs {productData.price}</h4>
                             }
-                                                        {
-                                CurrencyData ==='usd' && <h5 className="card-title text-muted">Price :$ {productData.usd_price}</h5>
+                            {
+                                CurrencyData ==='usd' && <h4 className="text-success fw-bold">Price : $ {productData.usd_price}</h4>
                             }
-                            <p className='mt-3'>
-                            <Link title='Demo' to={`${productData.demo_url}`} target='_blank' className='btn btn-dark'><i className="fa-solid fa-cart-plus "></i>Demo</Link>
-                            {!cartButtonClickStatus &&
-                                <button title='Add to Cart' type='button' onClick={cartAddButtonHandler} className='btn btn-primary ms-1'>
-                                    <i className="fa-solid fa-cart-plus "></i>Add to Cart
+
+                            {/* ⭐ CHANGED: consistent buttons with rounded-pill + icons */}
+                            <p className='mt-3 d-flex flex-wrap gap-2'>
+                                <Link title='Demo' to={`${productData.demo_url}`} target='_blank' className='btn btn-dark shadow-sm rounded-pill'>
+                                    <i className="fa fa-desktop me-1"></i> Demo
+                                </Link>
+
+                                {!cartButtonClickStatus &&
+                                    <button title='Add to Cart' type='button' onClick={cartAddButtonHandler} className='btn btn-primary shadow-sm rounded-pill'>
+                                        <i className="fa fa-cart-plus me-1"></i> Add to Cart
+                                    </button>
+                                }                            
+                                {cartButtonClickStatus &&
+                                    <button title='Remove from Cart ' type='button' onClick={cartRemoveButtonHandler} className='btn btn-warning shadow-sm rounded-pill'>
+                                        <i className="fa fa-times me-1"></i> Remove
+                                    </button>
+                                }
+                                <button onClick={buyNowHandler} className='btn btn-success shadow-sm rounded-pill'>
+                                    <i className="fa fa-bag-shopping me-1"></i> Buy Now
                                 </button>
-                            }                            
-                            {cartButtonClickStatus &&
-                                <button title='Remove from Cart ' type='button' onClick={cartRemoveButtonHandler} className='btn btn-warning ms-1'>
-                                    <i className="fa-solid fa-cart-plus "></i>Remove from Cart
-                                </button>
-                            }
-                            <button onClick={buyNowHandler} className='btn btn-success ms-1'>
-                                <i className="fa-solid fa-bag-shopping "></i>Buy Now
-                            </button>
-                            {
-                                (userContext && !productInWishlist) && <button onClick={saveInWishList} title='Add to Wistlist' className='btn btn-danger  ms-1'><i className="fa fa-heart "></i>Wishlist</button>
-                            }
-                            {
-                                (userContext && productInWishlist) && <button onClick={saveInWishList} title='Add to Wistlist' className='btn btn-danger  ms-1 disabled'><i className="fa fa-heart "></i>Wishlist</button>
-                            }                              
-                            {
-                                userContext ===null && <button title='Add to Wistlist' className='btn btn-danger  ms-1 disabled'><i className="fa fa-heart "></i>Wishlist</button>
-                            }
-                            
+                                {
+                                    (userContext && !productInWishlist) && <button onClick={saveInWishList} title='Add to Wistlist' className='btn btn-danger shadow-sm rounded-pill'><i className="fa fa-heart me-1"></i> Wishlist</button>
+                                }
+                                {
+                                    (userContext && productInWishlist) && <button onClick={saveInWishList} title='Add to Wistlist' className='btn btn-danger shadow-sm rounded-pill disabled'><i className="fa fa-heart me-1"></i> Wishlist</button>
+                                }                              
+                                {
+                                    userContext ===null && <button title='Add to Wistlist' className='btn btn-danger shadow-sm rounded-pill disabled'><i className="fa fa-heart me-1"></i> Wishlist</button>
+                                }
                             </p>
+
+                            {/* ⭐ CHANGED: better tags */}
                             <div className='producttags mt-4'>
-                                <h5>Product Tags</h5>
-                                <p className='mt-3'>
+                                <h5 className="fw-bold">Product Tags</h5>
+                                <div className='d-flex flex-wrap gap-2 mt-2'>
                                     {tagLinks}
-                                </p>
+                                </div>
                             </div>
                         </div>
 
@@ -335,7 +351,12 @@ for (let i = 0; i < Math.floor(avg_rating); i++) {
                 </div>
                {/* Related Product */}
                
-               <h3 className='mt-5 mb-2 text-center'>Related Product</h3><br/>
+               {/* ⭐ CHANGED: styled related heading */}
+                <h3 className="mt-4 mb-5 text-center fw-bold">
+                    <span className="border-bottom border-3 border-primary pb-1">
+                    Related Products
+                    </span>
+                </h3>
                 {relatedProducts.length > 0 && 
                 <OwlCarousel className="owl-theme" items={3} loop margin={10} >
                     {relatedProducts.map((product,index) =>{

@@ -90,23 +90,27 @@ function Header(){
           </li>
           <li className="nav-item">
             <div className="nav-link">
-              <select onChange={changeCurrency}>
+              <select
+                onChange={changeCurrency}
+                className="form-select form-select-sm w-auto text-success fw-semibold shadow-sm border-primary"
+              >
                 {
-                CurrencyData !=='usd' &&  
-                <>
-                  <option value='npr' selected>NPR</option>
-                  <option value='usd'>USD</option>
-                </>
+                  CurrencyData !== 'usd' &&
+                  <>
+                    <option value='npr' selected>NPR</option>
+                    <option value='usd'>USD</option>
+                  </>
                 }
                 {
-                CurrencyData ==='usd' &&  
-                <>
-                  <option value='npr'>NPR</option>
-                  <option value='usd' selected>USD</option>
-                </>
+                  CurrencyData === 'usd' &&
+                  <>
+                    <option value='npr'>NPR</option>
+                    <option value='usd' selected>USD</option>
+                  </>
                 }
               </select>
             </div>
+
           </li>
         </ul>
        
