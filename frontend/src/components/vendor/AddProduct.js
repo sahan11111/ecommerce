@@ -120,8 +120,25 @@ function AddProduct(){
             ...ProductData,
             'vendor':vendor_id,
         });
-        fetchData(baseUrl+'/categories/');
-    },[]);
+  // Fetch all categories including paginated results
+        const fetchAllCategories = async () => {
+            let allCategories = [];
+            let nextUrl = baseUrl + '/categories/';
+
+            try {
+                while (nextUrl) {
+                    const response = await axios.get(nextUrl);
+                    allCategories = [...allCategories, ...response.data.results];
+                    nextUrl = response.data.next;
+                }
+                setCategoryData(allCategories);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
+        fetchAllCategories();
+    }, []);
     function fetchData(baseurl){
         fetch(baseurl)
         .then((response)=>response.json())

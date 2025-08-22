@@ -179,24 +179,39 @@ class ProductList(generics.ListCreateAPIView):
     serializer_class=serializers.ProductListSerializer
     pagination_class=pagination.PageNumberPagination
     def get_queryset(self):
-        qs = super().get_queryset()
+        downloads_int = Cast('downloads', IntegerField())
+        avg_rating = Coalesce(Avg('product_rating__rating'), Value(0.0), output_field=FloatField())
 
-        if 'category' in self.request.GET:
+        # Cast downloads to FloatField before multiplying
+        downloads_float = Cast(downloads_int, FloatField())
+
+        popularity_score = ExpressionWrapper(
+            downloads_float * Value(0.3) + avg_rating * Value(0.7),
+            output_field=FloatField()
+        )
+
+        qs = models.Product.objects.annotate(
+            avg_rating=avg_rating,
+            total_downloads=downloads_int,
+            popularity_score=popularity_score
+        ).order_by('-popularity_score', '-id')
+
+        # Filter by category
+        category_id = self.request.GET.get('category')
+        if category_id:
+            qs = qs.filter(category_id=category_id)
+
+        # Limit results if fetch_limit provided
+        fetch_limit = self.request.GET.get('fetch_limit')
+        if fetch_limit:
             try:
-                category_id = self.request.GET.get('category')
-                category = models.ProductCategory.objects.get(id=category_id)
-                qs = qs.filter(category=category)
-            except models.ProductCategory.DoesNotExist:
-                qs = qs.none()  # Return empty queryset if category is invalid
+                fetch_limit = int(fetch_limit)
+                qs = qs[:fetch_limit]
+            except (TypeError, ValueError):
+                pass  
 
-        if 'fetch_limit' in self.request.GET:
-            try:
-                limit = int(self.request.GET.get('fetch_limit'))
-                qs = qs[:limit]
-            except ValueError:
-                pass  # fallback to unfiltered qs if limit is invalid
+        return qs
 
-        return qs   
     
     # def get_queryset(self):
     #     qs = super().get_queryset()
@@ -627,23 +642,25 @@ class ProductRatingViewset(viewsets.ModelViewSet):
     queryset=models.ProductRating.objects.all()
     
 class CategoryList(generics.ListCreateAPIView):
-    queryset=models.ProductCategory.objects.all()
-    serializer_class=serializers.CategorySerializer
+    serializer_class = serializers.CategorySerializer
+    
+
     def get_queryset(self):
         qs = models.ProductCategory.objects.annotate(
-            total_downloads=Sum(
-                Cast('catogary_product__downloads', IntegerField())  
+            total_downloads=Coalesce(
+                Sum(Cast('catogary_product__downloads', IntegerField())),
+                0
             ),
             total_products=Count('catogary_product')
-        )
+        ).order_by('-total_downloads', '-id')
+        
 
-        if 'fetch_limit' in self.request.GET:
+        limit = self.request.query_params.get('fetch_limit')
+        if limit:
             try:
-                limit = int(self.request.GET.get('fetch_limit'))
-                qs = qs.order_by('-total_downloads', '-id')[:limit]
+                return qs[:int(limit)]
             except ValueError:
-                pass  # fallback to unfiltered queryset
-
+                return qs
         return qs
 
  
