@@ -5,7 +5,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { UserContext } from './Context';
-
+import '@fortawesome/fontawesome-free/css/all.min.css';
 const checkCustomer = localStorage.getItem('customer_login');
 
 

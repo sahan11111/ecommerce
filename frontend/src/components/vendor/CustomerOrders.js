@@ -65,7 +65,7 @@ function CustomerOrders(){
                             <tbody>
                                 { OrderItems.map((item,index)=>
                                             <tr>
-                                            <td>{index+1}</td>
+                                            <td>{item.order.id}</td>
                                             <td>
                                             <Link to={`/vendor/update-product/${item.product.id}`}><img  src={item.product.image} className="img-thumbnail" width={80} alt="..."/></Link>
                                             <Link className='text-dark' to={`/vendor/update-product/${item.product.id}`}><label>{item.product.title}</label></Link>

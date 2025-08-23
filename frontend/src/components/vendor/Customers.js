@@ -55,6 +55,7 @@ function Customers(){
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Mobile</th>
+                                    <th>Order Id</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -66,9 +67,10 @@ function Customers(){
                                     <td>{item.order.customer.user.first_name} {item.order.customer.user.last_name}</td>
                                     <td>{item.order.customer.user.email}</td>
                                     <td>{item.order.customer.mobile}</td>
+                                    <td>{item.order.id}</td>
                                     <td>
                                         <Link to={`/customer/${item.order.customer.id}/orderitems/`} className='btn btn-primary btn-sm'>Orders</Link>
-                                        <button onClick={()=>showConfirm(item.order.customer.id,item.order.id)} className='btn btn-danger btn-sm ms-2'>Remove from list</button>
+                                        {/* <button onClick={()=>showConfirm(item.order.customer.id,item.order.id)} className='btn btn-danger btn-sm ms-2'>Remove from list</button> */}
                                     </td>
                                 </tr>
                             ))}
