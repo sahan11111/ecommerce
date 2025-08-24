@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404
 import json
 from django.db.models import Avg,Sum,IntegerField,Value, FloatField, ExpressionWrapper,OuterRef,Subquery
 from django.db.models.functions import Cast, Coalesce
+from datetime import date ,  timedelta
 # Create your views here.
 class VendorList(generics.ListCreateAPIView):
     queryset=models.Vendor.objects.all()
@@ -638,8 +639,13 @@ def delete_address(request,pk):
     
 #ProductReview
 class ProductRatingViewset(viewsets.ModelViewSet):
-    serializer_class=serializers.ProductRatingSerializer
-    queryset=models.ProductRating.objects.all()
+    serializer_class = serializers.ProductRatingSerializer
+    queryset = models.ProductRating.objects.all()  # required for DRF router
+
+    def get_queryset(self):
+        today = date.today()
+        three_days_ago = today - timedelta(days=2)  # today, yesterday, day before
+        return models.ProductRating.objects.filter(add_time__date__range=[three_days_ago, today])
     
 class CategoryList(generics.ListCreateAPIView):
     serializer_class = serializers.CategorySerializer

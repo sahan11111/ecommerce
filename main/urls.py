@@ -3,7 +3,7 @@ from .import views
 from rest_framework import routers
 router=routers.DefaultRouter()
 router.register('address',views.CustomerAddressViewset)
-router.register('productrating',views.ProductRatingViewset)
+router.register('productrating', views.ProductRatingViewset, basename='productrating')
 
 urlpatterns = [
     #Vendor
