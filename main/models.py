@@ -107,7 +107,7 @@ class Product(models.Model):
             return self.tags.split(',')
         return []
     def save(self, *args, **kwargs):
-        EXCHANGE_RATE = 0.008  # example exchange rate (1 PKR = 0.008 USD)
+        EXCHANGE_RATE = 0.00709   # example exchange rate (1 NPR = 0.00709  USD)
         if self.price:
             self.usd_price = round(self.price * EXCHANGE_RATE, 2)
         super(Product, self).save(*args, **kwargs)

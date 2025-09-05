@@ -45,7 +45,7 @@ function AllProducts() {
     return (
         <section className="container mt-4">
             {/* Latest Product */}
-            <h3 className="mb-4">All Products</h3>
+            <h3 className="mb-4">All Products ({totalResult})</h3>
             <div className="row mb-4">
                 {Products.map((product, index) => (
                     <SingleProduct key={product.id || index} product={product} />

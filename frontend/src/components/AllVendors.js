@@ -47,7 +47,7 @@ function AllVendors() {
     return (
         <section className="container mt-4">
 
-            <h3 className='mb-4'>All Sellers</h3>
+            <h3 className='mb-4'>All Sellers ({totalResult})</h3>
             <div className="row mb-4">
                 {VendorList.map((vendor) => (
                     <SingleVendor vendor={vendor} key={vendor.id} />

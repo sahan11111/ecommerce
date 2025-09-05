@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import SingleRelatedProduct from './SingleRelatedProduct';
+// ✅ Import only Carousel from Bootstrap
+import { Carousel } from 'bootstrap';
 
 function VendorDetail() {
   const baseUrl = 'http://127.0.0.1:8000/api';
@@ -12,6 +14,18 @@ function VendorDetail() {
     fetchData(`${baseUrl}/vendor/${vendor_id}/`);
     fetchProductData(`${baseUrl}/vendor/${vendor_id}/products/`);
   }, [vendor_id]);
+
+  useEffect(() => {
+    if (productList.length > 0) {
+      const myCarousel = document.querySelector('#ProductSlider');
+      if (myCarousel) {
+        new Carousel(myCarousel, {
+          interval: 2000, // Auto switch every 2 seconds
+          ride: 'carousel'
+        });
+      }
+    }
+  }, [productList]);
 
   function fetchProductData(baseurl) {
     fetch(baseurl)
@@ -71,8 +85,7 @@ function VendorDetail() {
 
           <div
             id="ProductSlider"
-            className="carousel carousel-dark slide shadow-sm rounded p-3 bg-light"
-            data-bs-ride="carousel"
+            className="carousel carousel-dark slide shadow-sm rounded p-4 bg-light"
           >
             {/* Indicators */}
             <div className="carousel-indicators">

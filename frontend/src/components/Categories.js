@@ -44,7 +44,7 @@ function Categories() {
   return (
     <section className="container mt-4">
       {/* Categories */}
-      <h3 className="mb-4">All Categories</h3>
+      <h3 className="mb-4">All Categories ({totalResult})</h3>
       <div className="row mb-2">
         {categories.map((category) => (
           <div className="col-12 col-md-3 mb-4" key={category.id}>
