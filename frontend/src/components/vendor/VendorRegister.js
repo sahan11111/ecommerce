@@ -1,8 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 function VendorRegister(props) {
     const baseUrl = 'http://127.0.0.1:8000/api';
+    const navigate = useNavigate();
 
     const [errorMsg, seterrorMsg] = useState('');
     const [successMsg, setsuccessMsg] = useState('');
@@ -75,6 +78,7 @@ function VendorRegister(props) {
                     setregisterFormData(initialFormState);
                     seterrorMsg('');
                     setsuccessMsg(response.data.msg);
+                    navigate('/vendor/login');
                 }
             })
             .catch(function (error) {
